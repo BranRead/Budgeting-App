@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import static com.brandon.dontspenditall_inoneplace.database.MySQLConnection.getConnection;
 
 public class LoginDAOImp implements LoginDAO {
-    private static final String SQL_SELECT = "SELECT id, fName, lName, email, username FROM users WHERE username = ? AND passwordHash = ?";
+    private static final String SQL_SELECT = "SELECT user_id, f_name, l_name, username FROM users WHERE username = ? AND password = ?";
     private Connection jdbcConnection;
 
     @Override
@@ -31,10 +31,9 @@ public class LoginDAOImp implements LoginDAO {
             rs.next();
             if(rs != null){
                 loggedInUser = new User(
-                        rs.getInt("id"),
-                        rs.getString("fName"),
-                        rs.getString("lName"),
-                        rs.getString("email"),
+                        rs.getInt("user_id"),
+                        rs.getString("f_name"),
+                        rs.getString("l_name"),
                         rs.getString("username")
                 );
             }
@@ -44,7 +43,6 @@ public class LoginDAOImp implements LoginDAO {
                     0,
                     "Error: ",
                     exception.getMessage(),
-                    "Error",
                     "Error"
             );
             System.out.println("Error: " + exception.getMessage());

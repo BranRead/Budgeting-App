@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MySQLConnection {
-    private static String url = "jdbc:mysql://localhost/todo_list";
+    private static String url = "jdbc:mysql://localhost/budgeting_app";
     private static String username = "root";
 
     private static String password = "";
