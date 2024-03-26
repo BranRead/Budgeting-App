@@ -2,6 +2,7 @@ package com.brandon.dontspenditall_inoneplace.model;
 
 public class BudgetSettings {
     private int id;
+    private int userId;
     private int needs;
     private int wants;
     private int savings;
@@ -9,8 +10,9 @@ public class BudgetSettings {
     public BudgetSettings() {
     }
 
-    public BudgetSettings(int id, int needs, int wants, int savings) {
+    public BudgetSettings(int id, int userId, int needs, int wants, int savings) {
         this.id = id;
+        this.userId = userId;
         this.needs = needs;
         this.wants = wants;
         this.savings = savings;
@@ -18,6 +20,14 @@ public class BudgetSettings {
 
     public int getId() {
         return id;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public void setId(int id) {
