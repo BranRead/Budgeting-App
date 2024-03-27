@@ -4,12 +4,13 @@ import java.sql.Date;
 
 public class Transaction {
     private int id;
+    private int userId;
     private double amount;
     private String tag;
     private Date transaction_date;
     private boolean isIncome;
 
-    public Transaction(int id, double amount, String tag, Date transaction_date, boolean isIncome) {
+    public Transaction(int id, int userId, double amount, String tag, Date transaction_date, boolean isIncome) {
         this.id = id;
         this.amount = amount;
         this.tag = tag;
@@ -26,6 +27,14 @@ public class Transaction {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public double getAmount() {
