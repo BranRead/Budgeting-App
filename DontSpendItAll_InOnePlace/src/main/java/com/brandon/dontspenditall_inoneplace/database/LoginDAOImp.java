@@ -28,8 +28,8 @@ public class LoginDAOImp implements LoginDAO {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, password);
             rs = preparedStatement.executeQuery();
-            rs.next();
-            if(rs != null){
+
+            if(rs.next()){
                 loggedInUser = new User(
                         rs.getInt("user_id"),
                         rs.getString("f_name"),

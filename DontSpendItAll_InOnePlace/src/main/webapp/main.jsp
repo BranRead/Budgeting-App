@@ -12,8 +12,35 @@
     <title>Title</title>
 </head>
 <body>
-    <h1>Worked!</h1>
-    <h1><c:out value="${requestScope.user.getfName()}"/></h1>
-    <h1><c:out value="${requestScope.user.getlName()}"/></h1>
+    <h1>Welcome: <c:out value="${requestScope.user.getfName()}"/> <c:out value="${requestScope.user.getlName()}"/></h1>
+
+    <h4>Income: </h4>
+
+
+
+    <table>
+        <tr>
+            <th>Needs</th>
+            <th>Wants</th>
+            <th>Savings</th>
+        </tr>
+        <tr>
+            <c:choose>
+                <c:when test="${sessionScope.budget == null}">
+                    <td>50%</td>
+                    <td>30%</td>
+                    <td>20%</td>
+                </c:when>
+                <c:otherwise>
+                    <td><c:out value="${sessionScope.budget.getNeeds()}"/>%</td>
+                    <td><c:out value="${sessionScope.budget.getWants()}"/>%</td>
+                    <td><c:out value="${sessionScope.budget.getSavings()}"/>%</td>
+                </c:otherwise>
+            </c:choose>
+            <c:forEach var="transaction" items="${sessionScope.transactions}">
+
+            </c:forEach>
+        </tr>
+    </table>
 </body>
 </html>

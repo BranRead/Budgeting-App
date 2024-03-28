@@ -7,13 +7,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.brandon.dontspenditall_inoneplace.database.MySQLConnection.getConnection;
 
 public class BudgetDAOImp implements BudgetDAO {
-
     private static final String SQL_SELECT = "SELECT * FROM budget_settings WHERE user_id = ?";
     private static final String  SQL_INSERT = "INSERT INTO budget_settings (user_id, needs, wants, savings) " +
             "VALUES(?, ?, ?, ?)";
@@ -32,12 +29,17 @@ public class BudgetDAOImp implements BudgetDAO {
             preparedStatement = conn.prepareStatement(SQL_SELECT);
             preparedStatement.setInt(1, user_id);
             ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()) {
+
+
+            if(!rs.next()) {
+                budgetSettings = null;
+            } else {
                 budgetSettings.setUserId(user_id);
                 budgetSettings.setNeeds(rs.getInt("needs"));
                 budgetSettings.setWants(rs.getInt("wants"));
                 budgetSettings.setSavings(rs.getInt("savings"));
             }
+
         } catch (Exception exception) {
             System.out.println("Error: " + exception.getMessage());
         }
