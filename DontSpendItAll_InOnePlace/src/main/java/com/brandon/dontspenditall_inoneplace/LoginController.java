@@ -3,13 +3,12 @@ package com.brandon.dontspenditall_inoneplace;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
 
 import com.brandon.dontspenditall_inoneplace.database.BudgetDAOImp;
 import com.brandon.dontspenditall_inoneplace.database.LoginDAOImp;
-import com.brandon.dontspenditall_inoneplace.database.TransactionDAOImp;
+import com.brandon.dontspenditall_inoneplace.database.ExpenseDAOImp;
 import com.brandon.dontspenditall_inoneplace.model.BudgetSettings;
+import com.brandon.dontspenditall_inoneplace.model.Expense;
 import com.brandon.dontspenditall_inoneplace.model.Transaction;
 import com.brandon.dontspenditall_inoneplace.model.User;
 import jakarta.servlet.RequestDispatcher;
@@ -21,12 +20,12 @@ import jakarta.servlet.annotation.*;
 public class LoginController extends HttpServlet {
     LoginDAOImp loginDAOImp;
     BudgetDAOImp budgetDAOImp;
-    TransactionDAOImp transactionDAOImp;
+    ExpenseDAOImp expenseDAOImp;
 
     public void init() {
         loginDAOImp = new LoginDAOImp();
         budgetDAOImp = new BudgetDAOImp();
-        transactionDAOImp = new TransactionDAOImp();
+        expenseDAOImp = new ExpenseDAOImp();
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -40,14 +39,14 @@ public class LoginController extends HttpServlet {
 
     private void select(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
         User user = loginDAOImp.select(request.getParameter("username"), request.getParameter("password"));
-        ArrayList<Transaction> transactions = transactionDAOImp.selectAll(user.getId());
+        ArrayList<Expense> expenses = expenseDAOImp.selectAll(user.getId());
         BudgetSettings budgetSettings = budgetDAOImp.select(user.getId());
         if(user != null) {
             request.setAttribute("user", user);
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
             session.setAttribute("budget", budgetSettings);
-            session.setAttribute("transactions", transactions);
+            session.setAttribute("expenses", expenses);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/main.jsp");
             dispatcher.include(request, response);
             dispatcher.forward(request, response);

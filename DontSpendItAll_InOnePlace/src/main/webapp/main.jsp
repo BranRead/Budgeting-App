@@ -10,37 +10,163 @@
 <html>
 <head>
     <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
-    <h1>Welcome: <c:out value="${requestScope.user.getfName()}"/> <c:out value="${requestScope.user.getlName()}"/></h1>
+    <h1>Welcome: <c:out value="${sessionScope.user.getfName()}"/> <c:out value="${sessionScope.user.getlName()}"/></h1>
 
     <h4>Income: </h4>
 
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Add expense
+    </button>
 
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="Expense" method="post">
 
-    <table>
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name">
+
+                        <label for="tags">Choose a tag:</label>
+                        <select id="tags" name="tag">
+                            <option value="need">Need</option>
+                            <option value="want">Want</option>
+                            <option value="savings">Savings</option>
+                        </select>
+
+                        <label for="amount">Amount:</label>
+                        <input type="number" id="amount" name="amount">
+
+                        <label for="date">Transaction date:</label>
+
+                        <input type="date" id="date" name="date" value=""/>
+                        <script>
+                            const date = new Date();
+                            let day = date.getDate();
+                            let month = date.getMonth();
+                            let year = date.getFullYear();
+
+                            let currentDate = day + "-" + (month + 1) + "-" + year;
+
+                            document.getElementById("date").setAttribute("value", currentDate);
+                        </script>
+
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table id="needs">
         <tr>
             <th>Needs</th>
-            <th>Wants</th>
-            <th>Savings</th>
         </tr>
         <tr>
             <c:choose>
                 <c:when test="${sessionScope.budget == null}">
                     <td>50%</td>
-                    <td>30%</td>
-                    <td>20%</td>
                 </c:when>
                 <c:otherwise>
                     <td><c:out value="${sessionScope.budget.getNeeds()}"/>%</td>
+                </c:otherwise>
+            </c:choose>
+        </tr>
+    </table>
+
+    <table id="wants">
+        <tr>
+            <th>Wants</th>
+        </tr>
+        <tr>
+            <c:choose>
+                <c:when test="${sessionScope.budget == null}">
+                    <td>30%</td>
+                </c:when>
+                <c:otherwise>
                     <td><c:out value="${sessionScope.budget.getWants()}"/>%</td>
+                </c:otherwise>
+            </c:choose>
+        </tr>
+    </table>
+
+    <table id="savings">
+        <tr>
+            <th>Needs</th>
+        </tr>
+        <tr>
+            <c:choose>
+                <c:when test="${sessionScope.budget == null}">
+                    <td>20%</td>
+                </c:when>
+                <c:otherwise>
                     <td><c:out value="${sessionScope.budget.getSavings()}"/>%</td>
                 </c:otherwise>
             </c:choose>
-            <c:forEach var="transaction" items="${sessionScope.transactions}">
-
-            </c:forEach>
         </tr>
     </table>
+
+    <c:forEach var="expense" items="${sessionScope.expenses}">
+        <script>
+
+
+            if("${expense.getTag()}" === "need"){
+                let table = document.getElementById("needs");
+                let row = table.insertRow(-1);
+                let cell = row.insertCell(0);
+                let name = document.createElement("p");
+                let amount = document.createElement("p");
+                name.innerText = "${expense.getName()}";
+                amount.innerText = "$${expense.getAmount()}";
+                cell.appendChild(name);
+                cell.appendChild(amount);
+            }
+
+            if("${expense.getTag()}" === "want"){
+                let table = document.getElementById("wants");
+                let row = table.insertRow(-1);
+                let cell = row.insertCell(0);
+                let name = document.createElement("p");
+                let amount = document.createElement("p");
+                name.innerText = "${expense.getName()}";
+                amount.innerText = "$${expense.getAmount()}";
+                cell.appendChild(name);
+                cell.appendChild(amount);
+            }
+
+            if("${expense.getTag()}" === "savings"){
+                let table = document.getElementById("savings");
+                let row = table.insertRow(-1);
+                let cell = row.insertCell(0);
+                let name = document.createElement("p");
+                let amount = document.createElement("p");
+                name.innerText = "${expense.getName()}";
+                amount.innerText = "$${expense.getAmount()}";
+                cell.appendChild(name);
+                cell.appendChild(amount);
+            }
+            console.log("${expense.getName()}");
+            console.log("${expense.getAmount()}");
+        </script>
+
+<%--                <tr><td><c:out value="${expense.getName()}"/></td></tr>--%>
+
+    </c:forEach>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 </body>
 </html>
