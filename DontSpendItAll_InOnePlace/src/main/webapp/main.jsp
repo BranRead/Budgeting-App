@@ -15,8 +15,21 @@
 <body>
     <h1>Welcome: <c:out value="${sessionScope.user.getfName()}"/> <c:out value="${sessionScope.user.getlName()}"/></h1>
 
-    <h4>Income: </h4>
+    <script>
+        let totalIncome = 0;
+    </script>
 
+    <h4 id="income">Income: </h4>
+
+    <c:forEach var="income" items="${sessionScope.incomes}">
+        <script>
+            console.log(${income.getAmount()});
+            totalIncome += ${income.getAmount()};
+        </script>
+    </c:forEach>
+    <script>
+        document.getElementById("income").innerText = "Income: " + totalIncome;
+    </script>
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
         Add expense
@@ -216,11 +229,38 @@
                 savingsAmount += ${expense.getAmount()};
             }
 
-            document.getElementById("needsActAmount").innerText = "$" + needsAmount;
-            document.getElementById("wantsActAmount").innerText = "$" + wantsAmount;
-            document.getElementById("savingsActAmount").innerText = "$" + savingsAmount;
+
         </script>
     </c:forEach>
+
+    <script>
+        document.getElementById("needsActAmount").innerText = "$" + needsAmount;
+        document.getElementById("wantsActAmount").innerText = "$" + wantsAmount;
+        document.getElementById("savingsActAmount").innerText = "$" + savingsAmount;
+
+
+
+
+
+
+    </script>
+
+    <c:choose>
+        <c:when test="${sessionScope.budget == null}">
+            <script>
+                document.getElementById("needsEstAmount").innerText = "$" + (totalIncome * 0.5);
+                document.getElementById("wantsEstAmount").innerText = "$" + (totalIncome * 0.3);
+                document.getElementById("savingsEstAmount").innerText = "$" + (totalIncome * 0.2);
+            </script>
+        </c:when>
+        <c:otherwise>
+            <script>
+                document.getElementById("needsEstAmount").innerText = "$" + (totalIncome * ${sessionScope.budget.getNeeds() / 100});
+                document.getElementById("wantsEstAmount").innerText = "$" + (totalIncome * ${sessionScope.budget.getWants() / 100});
+                document.getElementById("savingsEstAmount").innerText = "$" + (totalIncome * ${sessionScope.budget.getSavings() / 100});
+            </script>
+        </c:otherwise>
+    </c:choose>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>

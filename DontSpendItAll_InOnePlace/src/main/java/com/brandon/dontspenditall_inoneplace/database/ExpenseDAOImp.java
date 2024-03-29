@@ -1,8 +1,7 @@
 package com.brandon.dontspenditall_inoneplace.database;
 
-import com.brandon.dontspenditall_inoneplace.dao.ExpenseDao;
+import com.brandon.dontspenditall_inoneplace.dao.ExpenseDAO;
 import com.brandon.dontspenditall_inoneplace.model.Expense;
-import com.brandon.dontspenditall_inoneplace.model.Transaction;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,10 +11,10 @@ import java.util.ArrayList;
 
 import static com.brandon.dontspenditall_inoneplace.database.MySQLConnection.getConnection;
 
-public class ExpenseDAOImp implements ExpenseDao {
-    private static final String SQL_SELECT_expenses = "SELECT * FROM expenses WHERE user_id = ?";
+public class ExpenseDAOImp implements ExpenseDAO {
+    private static final String SQL_SELECT = "SELECT * FROM expenses WHERE user_id = ?";
 //    private static final String SQL_SELECT_income = "SELECT * FROM income WHERE user_id = ?";
-    private static final String  SQL_INSERT_expenses = "INSERT INTO expenses (user_id, name, amount, tag, transaction_date) VALUES(?, ?, ?, ?, ?)";
+    private static final String  SQL_INSERT = "INSERT INTO expenses (user_id, name, amount, tag, transaction_date) VALUES(?, ?, ?, ?, ?)";
 //    private static final String  SQL_INSERT_income = "INSERT INTO income (user_id, name, amount, tag, transaction_date) VALUES(?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE expenses " +
             "SET name = ?, amount = ?, tag = ?, transaction_date = ? WHERE expense_id = ?";
@@ -28,7 +27,7 @@ public class ExpenseDAOImp implements ExpenseDao {
 
         try {
             conn = getConnection();
-            preparedStatement = conn.prepareStatement(SQL_SELECT_expenses);
+            preparedStatement = conn.prepareStatement(SQL_SELECT);
 
             preparedStatement.setInt(1, user_id);
             ResultSet rs = preparedStatement.executeQuery();
@@ -54,7 +53,7 @@ public class ExpenseDAOImp implements ExpenseDao {
         PreparedStatement preparedStatement = null;
         try {
             conn = getConnection();
-            preparedStatement = conn.prepareStatement(SQL_INSERT_expenses);
+            preparedStatement = conn.prepareStatement(SQL_INSERT);
 
             preparedStatement.setInt(1, expense.getUserId());
             preparedStatement.setString(2, expense.getName());
@@ -101,4 +100,3 @@ public class ExpenseDAOImp implements ExpenseDao {
         }
     }
 }
-
