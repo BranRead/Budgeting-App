@@ -105,7 +105,7 @@
 
     <table id="savings">
         <tr>
-            <th>Needs</th>
+            <th>Savings</th>
         </tr>
         <tr>
             <c:choose>
@@ -119,10 +119,64 @@
         </tr>
     </table>
 
+    <table>
+        <tr>
+            <th>Category</th>
+            <th>Allowed Amount</th>
+            <th>Target Percent</th>
+            <th>Actual Amount</th>
+            <th>Actual Percent</th>
+        </tr>
+        <tr>
+            <td>Needs</td>
+            <td id="needsEstAmount">To be Imp</td>
+            <c:choose>
+                <c:when test="${sessionScope.budget == null}">
+                    <td>50%</td>
+                </c:when>
+                <c:otherwise>
+                    <td><c:out value="${sessionScope.budget.getNeeds()}"/>%</td>
+                </c:otherwise>
+            </c:choose>
+            <td id="needsActAmount"></td>
+            <td id="needsActPercent"></td>
+        </tr>
+        <tr>
+            <td>Wants</td>
+            <td id="wantsEstAmount">To be Imp</td>
+            <c:choose>
+                <c:when test="${sessionScope.budget == null}">
+                    <td>30%</td>
+                </c:when>
+                <c:otherwise>
+                    <td><c:out value="${sessionScope.budget.getWants()}"/>%</td>
+                </c:otherwise>
+            </c:choose>
+            <td id="wantsActAmount"></td>
+            <td id="wantsActPercent"></td>
+        </tr>
+        <tr>
+            <td>Savings</td>
+            <td id="savingsEstAmount">To be Imp</td>
+            <c:choose>
+                <c:when test="${sessionScope.budget == null}">
+                    <td>20%</td>
+                </c:when>
+                <c:otherwise>
+                    <td><c:out value="${sessionScope.budget.getSavings()}"/>%</td>
+                </c:otherwise>
+            </c:choose>
+            <td id="savingsActAmount"></td>
+            <td id="savingsActPercent"></td>
+        </tr>
+    </table>
+    <script>
+        let needsAmount = 0;
+        let wantsAmount = 0;
+        let savingsAmount = 0;
+    </script>
     <c:forEach var="expense" items="${sessionScope.expenses}">
         <script>
-
-
             if("${expense.getTag()}" === "need"){
                 let table = document.getElementById("needs");
                 let row = table.insertRow(-1);
@@ -133,6 +187,7 @@
                 amount.innerText = "$${expense.getAmount()}";
                 cell.appendChild(name);
                 cell.appendChild(amount);
+                needsAmount += ${expense.getAmount()};
             }
 
             if("${expense.getTag()}" === "want"){
@@ -145,6 +200,7 @@
                 amount.innerText = "$${expense.getAmount()}";
                 cell.appendChild(name);
                 cell.appendChild(amount);
+                wantsAmount += ${expense.getAmount()};
             }
 
             if("${expense.getTag()}" === "savings"){
@@ -157,13 +213,13 @@
                 amount.innerText = "$${expense.getAmount()}";
                 cell.appendChild(name);
                 cell.appendChild(amount);
+                savingsAmount += ${expense.getAmount()};
             }
-            console.log("${expense.getName()}");
-            console.log("${expense.getAmount()}");
+
+            document.getElementById("needsActAmount").innerText = "$" + needsAmount;
+            document.getElementById("wantsActAmount").innerText = "$" + wantsAmount;
+            document.getElementById("savingsActAmount").innerText = "$" + savingsAmount;
         </script>
-
-<%--                <tr><td><c:out value="${expense.getName()}"/></td></tr>--%>
-
     </c:forEach>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
