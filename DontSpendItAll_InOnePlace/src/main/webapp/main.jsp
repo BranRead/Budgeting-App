@@ -51,6 +51,7 @@
 
                         <label for="tags">Choose a tag:</label>
                         <select id="tags" name="tag">
+                            <option>-Choose a tag-</option>
                             <option value="need">Need</option>
                             <option value="want">Want</option>
                             <option value="savings">Savings</option>
@@ -75,6 +76,7 @@
 
                         <button type="submit">Submit</button>
                     </form>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -84,105 +86,167 @@
         </div>
     </div>
 
-    <table id="needs">
-        <tr>
-            <th>Needs</th>
-        </tr>
-        <tr>
-            <c:choose>
-                <c:when test="${sessionScope.budget == null}">
-                    <td>50%</td>
-                </c:when>
-                <c:otherwise>
-                    <td><c:out value="${sessionScope.budget.getNeeds()}"/>%</td>
-                </c:otherwise>
-            </c:choose>
-        </tr>
-    </table>
+    <div class="container">
+        <div class="row">
 
-    <table id="wants">
-        <tr>
-            <th>Wants</th>
-        </tr>
-        <tr>
             <c:choose>
-                <c:when test="${sessionScope.budget == null}">
-                    <td>30%</td>
-                </c:when>
-                <c:otherwise>
-                    <td><c:out value="${sessionScope.budget.getWants()}"/>%</td>
-                </c:otherwise>
-            </c:choose>
-        </tr>
-    </table>
+                <c:when test="${requestScope.edit == true}">
+                    <div class="col-lg-2">
+                        <form method="post" action="Expense">
+                            <label for="nameEdit">Name:</label>
+                            <input type="text" id="nameEdit" name="name" value="${requestScope.expenseToEdit.getName()}">
 
-    <table id="savings">
-        <tr>
-            <th>Savings</th>
-        </tr>
-        <tr>
-            <c:choose>
-                <c:when test="${sessionScope.budget == null}">
-                    <td>20%</td>
-                </c:when>
-                <c:otherwise>
-                    <td><c:out value="${sessionScope.budget.getSavings()}"/>%</td>
-                </c:otherwise>
-            </c:choose>
-        </tr>
-    </table>
+                            <label for="tagsEdit">Choose a tag:</label>
+                            <select id="tagsEdit" name="tag">
+                                <option>-Choose a tag-</option>
+                                <option id="needEdit" value="need">Need</option>
+                                <option id="wantEdit" value="want">Want</option>
+                                <option id="savingsEdit" value="savings">Savings</option>
+                            </select>
+                            <script>
+                                if("${requestScope.expenseToEdit.getTag()}" === "need"){
+                                    document.getElementById("tagsEdit").options[1].selected = true;
+                                    document.getElementById("tagsEdit").value = "need";
+                                } else if ("${requestScope.expenseToEdit.getTag()}" === "want"){
+                                    document.getElementById("tagsEdit").options[2].selected = true;
+                                    document.getElementById("tagsEdit").value = "want";
+                                } else if ("${requestScope.expenseToEdit.getTag()}" === "savings"){
+                                    document.getElementById("tagsEdit").options[3].selected = true;
+                                    document.getElementById("tagsEdit").value = "savings";
+                                }
+                            </script>
 
-    <table>
-        <tr>
-            <th>Category</th>
-            <th>Allowed Amount</th>
-            <th>Target Percent</th>
-            <th>Actual Amount</th>
-            <th>Actual Percent</th>
-        </tr>
-        <tr>
-            <td>Needs</td>
-            <td id="needsEstAmount">To be Imp</td>
-            <c:choose>
-                <c:when test="${sessionScope.budget == null}">
-                    <td>50%</td>
+                            <label for="amountEdit">Amount:</label>
+                            <input type="number" id="amountEdit" name="amount" value="${requestScope.expenseToEdit.getAmount()}">
+
+                            <label for="date">Transaction date:</label>
+
+                            <input type="date" id="dateEdit" name="date" value="${requestScope.expenseToEdit.getTransaction_date()}"/>
+
+                            <button type="submit" name="editId" value="${requestScope.expenseToEdit.getId()}">Submit</button>
+                        </form>
+                        <form action="Expense" method="get"><button name="refresh" value="true" type="submit">Exit</button></form>
+                    </div>
                 </c:when>
-                <c:otherwise>
-                    <td><c:out value="${sessionScope.budget.getNeeds()}"/>%</td>
-                </c:otherwise>
             </c:choose>
-            <td id="needsActAmount"></td>
-            <td id="needsActPercent"></td>
-        </tr>
-        <tr>
-            <td>Wants</td>
-            <td id="wantsEstAmount">To be Imp</td>
-            <c:choose>
-                <c:when test="${sessionScope.budget == null}">
-                    <td>30%</td>
-                </c:when>
-                <c:otherwise>
-                    <td><c:out value="${sessionScope.budget.getWants()}"/>%</td>
-                </c:otherwise>
-            </c:choose>
-            <td id="wantsActAmount"></td>
-            <td id="wantsActPercent"></td>
-        </tr>
-        <tr>
-            <td>Savings</td>
-            <td id="savingsEstAmount">To be Imp</td>
-            <c:choose>
-                <c:when test="${sessionScope.budget == null}">
-                    <td>20%</td>
-                </c:when>
-                <c:otherwise>
-                    <td><c:out value="${sessionScope.budget.getSavings()}"/>%</td>
-                </c:otherwise>
-            </c:choose>
-            <td id="savingsActAmount"></td>
-            <td id="savingsActPercent"></td>
-        </tr>
-    </table>
+
+
+            <div class="col-lg-3">
+                <table id="needs" class="table">
+                    <thead>
+                        <tr>
+                            <c:choose>
+                                <c:when test="${sessionScope.budget == null}">
+                                    <th>Needs - 50%</th>
+                                </c:when>
+                                <c:otherwise>
+                                    <th>Needs - <c:out value="${sessionScope.budget.getNeeds()}"/>%</th>
+                                </c:otherwise>
+                            </c:choose>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div class="col-lg-3">
+                <table id="wants" class="table">
+                    <thead>
+                        <tr>
+                            <c:choose>
+                                <c:when test="${sessionScope.budget == null}">
+                                    <th>Wants - 30%</th>
+                                </c:when>
+                                <c:otherwise>
+                                    <th>Wants - <c:out value="${sessionScope.budget.getWants()}"/>%</th>
+                                </c:otherwise>
+                            </c:choose>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div class="col-lg-3">
+                <table id="savings" class="table">
+                    <thead>
+                        <tr>
+                            <c:choose>
+                                <c:when test="${sessionScope.budget == null}">
+                                    <th>Savings - 20%</th>
+                                </c:when>
+                                <c:otherwise>
+                                    <th>Savings - <c:out value="${sessionScope.budget.getSavings()}"/>%</th>
+                                </c:otherwise>
+                            </c:choose>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Allowed Amount</th>
+                            <th>Target Percent</th>
+                            <th>Actual Amount</th>
+                            <th>Actual Percent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Needs</td>
+                        <td id="needsEstAmount">To be Imp</td>
+                        <c:choose>
+                            <c:when test="${sessionScope.budget == null}">
+                                <td>50%</td>
+                            </c:when>
+                            <c:otherwise>
+                                <td><c:out value="${sessionScope.budget.getNeeds()}"/>%</td>
+                            </c:otherwise>
+                        </c:choose>
+                        <td id="needsActAmount"></td>
+                        <td id="needsActPercent"></td>
+                    </tr>
+                    <tr>
+                        <td>Wants</td>
+                        <td id="wantsEstAmount">To be Imp</td>
+                        <c:choose>
+                            <c:when test="${sessionScope.budget == null}">
+                                <td>30%</td>
+                            </c:when>
+                            <c:otherwise>
+                                <td><c:out value="${sessionScope.budget.getWants()}"/>%</td>
+                            </c:otherwise>
+                        </c:choose>
+                        <td id="wantsActAmount"></td>
+                        <td id="wantsActPercent"></td>
+                    </tr>
+                    <tr>
+                        <td>Savings</td>
+                        <td id="savingsEstAmount">To be Imp</td>
+                        <c:choose>
+                            <c:when test="${sessionScope.budget == null}">
+                                <td>20%</td>
+                            </c:when>
+                            <c:otherwise>
+                                <td><c:out value="${sessionScope.budget.getSavings()}"/>%</td>
+                            </c:otherwise>
+                        </c:choose>
+                        <td id="savingsActAmount"></td>
+                        <td id="savingsActPercent"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <script>
         let needsAmount = 0;
         let wantsAmount = 0;
@@ -195,6 +259,37 @@
                 let table = document.getElementById("needs");
                 let row = table.insertRow(-1);
                 let cell = row.insertCell(0);
+                let cellBtns = row.insertCell(1);
+
+                let editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+                editButton.type = "submit";
+
+                let editButtonForm = document.createElement("form");
+                editButtonForm.action = "Expense";
+                editButtonForm.method = "GET";
+                editButtonForm.appendChild(editButton);
+                editButton.name = "editId";
+                editButton.value = ${expense.getId()};
+
+                let deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.type = "submit";
+
+                let deleteButtonForm = document.createElement("form");
+                deleteButtonForm.action = "Expense";
+                deleteButtonForm.method = "POST";
+                deleteButtonForm.appendChild(deleteButton);
+                deleteButton.name = "deleteId";
+                deleteButton.value = ${expense.getId()};
+
+
+
+
+                cellBtns.appendChild(editButtonForm);
+                cellBtns.appendChild(deleteButtonForm);
+
+
                 let name = document.createElement("p");
                 let amount = document.createElement("p");
                 name.innerText = "${expense.getName()}";
@@ -209,6 +304,34 @@
                 let table = document.getElementById("wants");
                 let row = table.insertRow(-1);
                 let cell = row.insertCell(0);
+                let cellBtns = row.insertCell(1);
+                let editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+                editButton.type = "submit";
+
+                let editButtonForm = document.createElement("form");
+                editButtonForm.action = "Expense";
+                editButtonForm.method = "GET";
+                editButtonForm.appendChild(editButton);
+                editButton.name = "editId";
+                editButton.value = ${expense.getId()};
+
+                let deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.type = "submit";
+
+                let deleteButtonForm = document.createElement("form");
+                deleteButtonForm.action = "Expense";
+                deleteButtonForm.method = "POST";
+                deleteButtonForm.appendChild(deleteButton);
+                deleteButton.name = "deleteId";
+                deleteButton.value = ${expense.getId()};
+
+
+
+
+                cellBtns.appendChild(editButtonForm);
+                cellBtns.appendChild(deleteButtonForm);
                 let name = document.createElement("p");
                 let amount = document.createElement("p");
                 name.innerText = "${expense.getName()}";
@@ -223,6 +346,31 @@
                 let table = document.getElementById("savings");
                 let row = table.insertRow(-1);
                 let cell = row.insertCell(0);
+                let cellBtns = row.insertCell(1);
+                let editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+                editButton.type = "submit";
+
+                let editButtonForm = document.createElement("form");
+                editButtonForm.action = "Expense";
+                editButtonForm.method = "GET";
+                editButtonForm.appendChild(editButton);
+                editButton.name = "editId";
+                editButton.value = ${expense.getId()};
+
+                let deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.type = "submit";
+
+                let deleteButtonForm = document.createElement("form");
+                deleteButtonForm.action = "Expense";
+                deleteButtonForm.method = "POST";
+                deleteButtonForm.appendChild(deleteButton);
+                deleteButton.name = "deleteId";
+                deleteButton.value = ${expense.getId()};
+
+                cellBtns.appendChild(editButtonForm);
+                cellBtns.appendChild(deleteButtonForm);
                 let name = document.createElement("p");
                 let amount = document.createElement("p");
                 name.innerText = "${expense.getName()}";

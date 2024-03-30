@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import static com.brandon.dontspenditall_inoneplace.database.MySQLConnection.getConnection;
 
 public class ExpenseDAOImp implements ExpenseDAO {
-    private static final String SQL_SELECT = "SELECT * FROM expenses WHERE user_id = ?";
+    private static final String SQL_SELECT_All = "SELECT * FROM expenses WHERE user_id = ?";
+    private static final String SQL_SELECT = "SELECT * FROM expenses WHERE expense_id = ?";
 //    private static final String SQL_SELECT_income = "SELECT * FROM income WHERE user_id = ?";
     private static final String  SQL_INSERT = "INSERT INTO expenses (user_id, name, amount, tag, transaction_date) VALUES(?, ?, ?, ?, ?)";
 //    private static final String  SQL_INSERT_income = "INSERT INTO income (user_id, name, amount, tag, transaction_date) VALUES(?, ?, ?, ?, ?)";
@@ -27,13 +28,14 @@ public class ExpenseDAOImp implements ExpenseDAO {
 
         try {
             conn = getConnection();
-            preparedStatement = conn.prepareStatement(SQL_SELECT);
+            preparedStatement = conn.prepareStatement(SQL_SELECT_All);
 
             preparedStatement.setInt(1, user_id);
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()) {
                 Expense expense = new Expense();
                 expense.setUserId(user_id);
+                expense.setId(rs.getInt("expense_id"));
                 expense.setName(rs.getString("name"));
                 expense.setAmount(rs.getDouble("amount"));
                 expense.setTag(rs.getString("tag"));
@@ -45,6 +47,33 @@ public class ExpenseDAOImp implements ExpenseDAO {
             System.out.println("Error: " + exception.getMessage());
         }
         return expenses;
+    }
+
+    @Override
+    public Expense select(int expense_id) throws SQLException {
+        Connection conn = null;
+        PreparedStatement preparedStatement = null;
+        Expense expense = new Expense();
+
+        try {
+            conn = getConnection();
+            preparedStatement = conn.prepareStatement(SQL_SELECT);
+
+
+            preparedStatement.setInt(1, expense_id);
+            ResultSet rs = preparedStatement.executeQuery();
+            if(rs.next()){
+                expense.setUserId(rs.getInt("user_id"));
+                expense.setId(expense_id);
+                expense.setName(rs.getString("name"));
+                expense.setAmount(rs.getDouble("amount"));
+                expense.setTag(rs.getString("tag"));
+                expense.setTransaction_date(rs.getDate("transaction_date"));
+            }
+        } catch (Exception exception) {
+            System.out.println("Error: " + exception.getMessage());
+        }
+        return expense;
     }
 
     @Override
@@ -87,13 +116,13 @@ public class ExpenseDAOImp implements ExpenseDAO {
     }
 
     @Override
-    public void delete(Expense expense) throws SQLException {
+    public void delete(int expenseId) throws SQLException {
         Connection conn = null;
         PreparedStatement preparedStatement = null;
         try {
             conn = getConnection();
             preparedStatement = conn.prepareStatement(SQL_DELETE);
-            preparedStatement.setInt(1, expense.getId());
+            preparedStatement.setInt(1, expenseId);
             preparedStatement.executeUpdate();
         } catch (Exception exception) {
             System.out.println("Error: " + exception.getMessage());
