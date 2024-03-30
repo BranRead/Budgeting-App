@@ -28,7 +28,7 @@
         </script>
     </c:forEach>
     <script>
-        document.getElementById("income").innerText = "Income: " + totalIncome;
+        document.getElementById("income").innerText = "Income: $" + totalIncome.toFixed(2);
     </script>
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -191,45 +191,46 @@
     <c:forEach var="expense" items="${sessionScope.expenses}">
         <script>
             if("${expense.getTag()}" === "need"){
+                let amountFormatted = parseFloat(${expense.getAmount()}).toFixed(2);
                 let table = document.getElementById("needs");
                 let row = table.insertRow(-1);
                 let cell = row.insertCell(0);
                 let name = document.createElement("p");
                 let amount = document.createElement("p");
                 name.innerText = "${expense.getName()}";
-                amount.innerText = "$${expense.getAmount()}";
+                amount.innerText = "$" + amountFormatted;
                 cell.appendChild(name);
                 cell.appendChild(amount);
                 needsAmount += ${expense.getAmount()};
             }
 
             if("${expense.getTag()}" === "want"){
+                let amountFormatted = parseFloat(${expense.getAmount()}).toFixed(2);
                 let table = document.getElementById("wants");
                 let row = table.insertRow(-1);
                 let cell = row.insertCell(0);
                 let name = document.createElement("p");
                 let amount = document.createElement("p");
                 name.innerText = "${expense.getName()}";
-                amount.innerText = "$${expense.getAmount()}";
+                amount.innerText = "$" + amountFormatted;
                 cell.appendChild(name);
                 cell.appendChild(amount);
                 wantsAmount += ${expense.getAmount()};
             }
 
             if("${expense.getTag()}" === "savings"){
+                let amountFormatted = parseFloat(${expense.getAmount()}).toFixed(2);
                 let table = document.getElementById("savings");
                 let row = table.insertRow(-1);
                 let cell = row.insertCell(0);
                 let name = document.createElement("p");
                 let amount = document.createElement("p");
                 name.innerText = "${expense.getName()}";
-                amount.innerText = "$${expense.getAmount()}";
+                amount.innerText = "$" + amountFormatted;
                 cell.appendChild(name);
                 cell.appendChild(amount);
                 savingsAmount += ${expense.getAmount()};
             }
-
-
         </script>
     </c:forEach>
 
@@ -237,27 +238,24 @@
         document.getElementById("needsActAmount").innerText = "$" + needsAmount;
         document.getElementById("wantsActAmount").innerText = "$" + wantsAmount;
         document.getElementById("savingsActAmount").innerText = "$" + savingsAmount;
-
-
-
-
-
-
+        document.getElementById("needsActPercent").innerText = ((needsAmount / totalIncome) * 100).toFixed(2) + "%"
+        document.getElementById("wantsActPercent").innerText = ((wantsAmount / totalIncome) * 100).toFixed(2) + "%"
+        document.getElementById("savingsActPercent").innerText = ((savingsAmount / totalIncome) * 100).toFixed(2) + "%"
     </script>
 
     <c:choose>
         <c:when test="${sessionScope.budget == null}">
             <script>
-                document.getElementById("needsEstAmount").innerText = "$" + (totalIncome * 0.5);
-                document.getElementById("wantsEstAmount").innerText = "$" + (totalIncome * 0.3);
-                document.getElementById("savingsEstAmount").innerText = "$" + (totalIncome * 0.2);
+                document.getElementById("needsEstAmount").innerText = "$" + (totalIncome * 0.5).toFixed(2);
+                document.getElementById("wantsEstAmount").innerText = "$" + (totalIncome * 0.3).toFixed(2);
+                document.getElementById("savingsEstAmount").innerText = "$" + (totalIncome * 0.2).toFixed(2);
             </script>
         </c:when>
         <c:otherwise>
             <script>
-                document.getElementById("needsEstAmount").innerText = "$" + (totalIncome * ${sessionScope.budget.getNeeds() / 100});
-                document.getElementById("wantsEstAmount").innerText = "$" + (totalIncome * ${sessionScope.budget.getWants() / 100});
-                document.getElementById("savingsEstAmount").innerText = "$" + (totalIncome * ${sessionScope.budget.getSavings() / 100});
+                document.getElementById("needsEstAmount").innerText = "$" + (totalIncome * ${sessionScope.budget.getNeeds() / 100}).toFixed(2);
+                document.getElementById("wantsEstAmount").innerText = "$" + (totalIncome * ${sessionScope.budget.getWants() / 100}).toFixed(2);
+                document.getElementById("savingsEstAmount").innerText = "$" + (totalIncome * ${sessionScope.budget.getSavings() / 100}).toFixed(2);
             </script>
         </c:otherwise>
     </c:choose>
