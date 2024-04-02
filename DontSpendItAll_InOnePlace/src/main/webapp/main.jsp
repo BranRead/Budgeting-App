@@ -15,32 +15,148 @@
 <body>
     <h1>Welcome: <c:out value="${sessionScope.user.getfName()}"/> <c:out value="${sessionScope.user.getlName()}"/></h1>
 
-    <script>
-        let totalIncome = 0;
-    </script>
-
     <h4 id="income">Income: </h4>
 
-    <c:forEach var="income" items="${sessionScope.incomes}">
-        <script>
-            console.log(${income.getAmount()});
-            totalIncome += ${income.getAmount()};
-        </script>
-    </c:forEach>
-    <script>
-        document.getElementById("income").innerText = "Income: $" + totalIncome.toFixed(2);
-    </script>
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Add expense
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#budgetModal">
+        Change Budget Breakdown
     </button>
 
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="budgetModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Budget Breakdown</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="Budget" method="post">
+
+                        <label for="needsPercent" class="form-label">Needs Percent</label>
+                        <c:choose>
+                            <c:when test="${sessionScope.budget == null}">
+                                <input type="range" name="needsPercent" class="form-range" min="0" max="100" step="5" value="50" id="needsPercent">
+                                <%--                        <p id="needsPercentDisplayPlus"></p>--%>
+                                <p id="needsPercentDisplay">50%</p>
+                                <%--                        <p id="needsPercentDisplayMinus"></p>--%>
+                            </c:when>
+                            <c:otherwise>
+                                <input type="range" name="needsPercent" class="form-range" min="0" max="100" step="5" value="${sessionScope.budget.getNeeds()}" id="needsPercent">
+                                <%--                        <p id="needsPercentDisplayPlus"></p>--%>
+                                <p id="needsPercentDisplay"><c:out value="${sessionScope.budget.getNeeds()}" />%</p>
+                                <%--                        <p id="needsPercentDisplayMinus"></p>--%>
+                            </c:otherwise>
+                        </c:choose>
+                        <script>
+                            document.getElementById("needsPercent").addEventListener("input", function (e) {
+                                // let value = this.value;
+                                // document.getElementById("needsPercentDisplayPlus").textContent = (value + 5) + "%";
+                                document.getElementById("needsPercentDisplay").textContent = this.value + "%";
+                                // document.getElementById("needsPercentDisplayMinus").textContent = value - 5 + "%";
+                            })
+                        </script>
+
+                        <label for="wantsPercent" class="form-label">Wants Percent</label>
+
+                        <c:choose>
+                            <c:when test="${sessionScope.budget == null}">
+                                <input type="range" name="wantsPercent" class="form-range" min="0" max="100" step="5" value="30" id="wantsPercent">
+                                <p id="wantsPercentDisplay">30%</p>
+                            </c:when>
+                            <c:otherwise>
+                                <input type="range" name="wantsPercent" class="form-range" min="0" max="100" step="5" value="${sessionScope.budget.getWants()}" id="wantsPercent">
+                                <p id="wantsPercentDisplay"><c:out value="${sessionScope.budget.getWants()}"/>%</p>
+                            </c:otherwise>
+                        </c:choose>
+
+                        <script>
+                            document.getElementById("wantsPercent").addEventListener("input", function (e) {
+                                document.getElementById("wantsPercentDisplay").textContent = this.value + "%";
+                            })
+                        </script>
+
+                        <label for="savingsPercent" class="form-label">Savings Percent</label>
+                        <c:choose>
+                            <c:when test="${sessionScope.budget == null}">
+                                <input type="range" name="savingsPercent" class="form-range" min="0" max="100" step="5" value="20" id="savingsPercent">
+                                <p id="savingsPercentDisplay">20%</p>
+                            </c:when>
+                            <c:otherwise>
+                                <input type="range" name="savingsPercent" class="form-range" min="0" max="100" step="5" value="${sessionScope.budget.getSavings()}" id="savingsPercent">
+                                <p id="savingsPercentDisplay"><c:out value="${sessionScope.budget.getSavings()}"/>%</p>
+                            </c:otherwise>
+                        </c:choose>
+                        <script>
+                            document.getElementById("savingsPercent").addEventListener("input", function (e) {
+                                document.getElementById("savingsPercentDisplay").textContent = this.value + "%";
+                            })
+                        </script>
+
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#incomeModal">
+        Add Income
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="incomeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Income</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="Income" method="post">
+
+                        <label for="nameIncome">Name:</label>
+                        <input type="text" id="nameIncome" name="name">
+
+
+                        <label for="amountIncome">Amount:</label>
+                        <input type="number" id="amountIncome" name="amount" step="0.01">
+
+                        <label for="dateIncome">Transaction date:</label>
+
+                        <input type="date" id="dateIncome" name="date" value=""/>
+                        <script>
+                            const date = new Date();
+                            let day = date.getDate();
+                            let month = date.getMonth();
+                            let year = date.getFullYear();
+
+                            let currentDate = day + "-" + (month + 1) + "-" + year;
+
+                            document.getElementById("date").setAttribute("value", currentDate);
+                        </script>
+
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#expenseModal">
+        Add Expense
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="expenseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Expense</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -74,20 +190,50 @@
                             document.getElementById("date").setAttribute("value", currentDate);
                         </script>
 
-                        <button type="submit">Submit</button>
+                        <button class="btn btn-primary" type="submit">Submit</button>
                     </form>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="container">
-        <div class="row">
+        <div class="row d-flex flex-row justify-content-center">
+            <h3 class="text-center">Income Sources</h3>
+            <c:choose>
+                <c:when test="${requestScope.editIncome == true}">
+                    <div class="col-lg-2">
+                        <form method="post" action="Income">
+                            <label for="nameEditIncome">Name:</label>
+                            <input type="text" id="nameEditIncome" name="name" value="${requestScope.incomeToEdit.getName()}">
+
+
+                            <label for="amountEditIncome">Amount:</label>
+                            <input type="number" id="amountEditIncome" name="amount" value="${requestScope.incomeToEdit.getAmount()}">
+
+                            <label for="date">Transaction date:</label>
+
+                            <input type="date" id="dateEditIncome" name="date" value="${requestScope.incomeToEdit.getTransaction_date()}"/>
+
+                            <button type="submit" name="editId" value="${requestScope.incomeToEdit.getId()}">Submit</button>
+                        </form>
+                        <form action="Expense" method="get"><button name="refresh" value="true" type="submit">Exit</button></form>
+                    </div>
+                </c:when>
+            </c:choose>
+            <div class="col-lg-4">
+                <table id="incomeSources" class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Amount</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="row d-flex flex-row justify-content-center">
+            <h3 class="text-center">Expenses</h3>
 
             <c:choose>
                 <c:when test="${requestScope.edit == true}">
@@ -129,7 +275,6 @@
                     </div>
                 </c:when>
             </c:choose>
-
 
             <div class="col-lg-3">
                 <table id="needs" class="table">
@@ -186,8 +331,9 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-lg-4">
+        <div class="row d-flex flex-row justify-content-center">
+            <h3 class="text-center">Money Stats</h3>
+            <div class="col-lg-6">
                 <table class="table">
                     <thead>
                         <tr>
@@ -196,6 +342,7 @@
                             <th>Target Percent</th>
                             <th>Actual Amount</th>
                             <th>Actual Percent</th>
+                            <th>Money Left Over</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -212,6 +359,7 @@
                         </c:choose>
                         <td id="needsActAmount"></td>
                         <td id="needsActPercent"></td>
+                        <td id="needsAmountLeftOver"></td>
                     </tr>
                     <tr>
                         <td>Wants</td>
@@ -226,6 +374,7 @@
                         </c:choose>
                         <td id="wantsActAmount"></td>
                         <td id="wantsActPercent"></td>
+                        <td id="wantsAmountLeftOver"></td>
                     </tr>
                     <tr>
                         <td>Savings</td>
@@ -240,6 +389,7 @@
                         </c:choose>
                         <td id="savingsActAmount"></td>
                         <td id="savingsActPercent"></td>
+                        <td id="savingsAmountLeftOver"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -252,6 +402,7 @@
         let wantsAmount = 0;
         let savingsAmount = 0;
     </script>
+
     <c:forEach var="expense" items="${sessionScope.expenses}">
         <script>
             if("${expense.getTag()}" === "need"){
@@ -383,6 +534,60 @@
     </c:forEach>
 
     <script>
+        let totalIncome = 0;
+    </script>
+
+    <c:forEach var="income" items="${sessionScope.incomes}">
+        <script>
+            {
+                totalIncome += ${income.getAmount()};
+                console.log(${income.getAmount()})
+                let table = document.getElementById("incomeSources");
+                let row = table.insertRow(-1);
+                let cell = row.insertCell(0);
+                let cellBtns = row.insertCell(1);
+
+                let editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+                editButton.type = "submit";
+
+                let editButtonForm = document.createElement("form");
+                editButtonForm.action = "Income";
+                editButtonForm.method = "GET";
+                editButtonForm.appendChild(editButton);
+                editButton.name = "editId";
+                editButton.value = ${income.getId()};
+
+                let deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.type = "submit";
+
+                let deleteButtonForm = document.createElement("form");
+                deleteButtonForm.action = "Income";
+                deleteButtonForm.method = "POST";
+                deleteButtonForm.appendChild(deleteButton);
+                deleteButton.name = "deleteId";
+                deleteButton.value = ${income.getId()};
+
+                cellBtns.appendChild(editButtonForm);
+                cellBtns.appendChild(deleteButtonForm);
+
+
+                let name = document.createElement("p");
+                let amount = document.createElement("p");
+                name.innerText = "${income.getName()}";
+                amount.innerText = "$" + parseFloat(${income.getAmount()}).toFixed(2);
+                cell.appendChild(name);
+                cell.appendChild(amount);
+            }
+        </script>
+    </c:forEach>
+
+    <script>
+        document.getElementById("income").innerText = "Income: $" + totalIncome.toFixed(2);
+    </script>
+
+    <script>
         document.getElementById("needsActAmount").innerText = "$" + needsAmount;
         document.getElementById("wantsActAmount").innerText = "$" + wantsAmount;
         document.getElementById("savingsActAmount").innerText = "$" + savingsAmount;
@@ -394,19 +599,45 @@
     <c:choose>
         <c:when test="${sessionScope.budget == null}">
             <script>
-                document.getElementById("needsEstAmount").innerText = "$" + (totalIncome * 0.5).toFixed(2);
-                document.getElementById("wantsEstAmount").innerText = "$" + (totalIncome * 0.3).toFixed(2);
-                document.getElementById("savingsEstAmount").innerText = "$" + (totalIncome * 0.2).toFixed(2);
+                let needsEstAmount = totalIncome * 0.5;
+                let wantsEstAmount = totalIncome * 0.3;
+                let savingsEstAmount = totalIncome * 0.2;
             </script>
         </c:when>
         <c:otherwise>
             <script>
-                document.getElementById("needsEstAmount").innerText = "$" + (totalIncome * ${sessionScope.budget.getNeeds() / 100}).toFixed(2);
-                document.getElementById("wantsEstAmount").innerText = "$" + (totalIncome * ${sessionScope.budget.getWants() / 100}).toFixed(2);
-                document.getElementById("savingsEstAmount").innerText = "$" + (totalIncome * ${sessionScope.budget.getSavings() / 100}).toFixed(2);
+                let needsEstAmount = totalIncome * ${sessionScope.budget.getNeeds() / 100};
+                let wantsEstAmount = totalIncome * ${sessionScope.budget.getWants() / 100};
+                let savingsEstAmount = totalIncome * ${sessionScope.budget.getSavings() / 100};
             </script>
         </c:otherwise>
     </c:choose>
+
+    <script>
+        document.getElementById("needsEstAmount").innerText = "$" + (needsEstAmount).toFixed(2);
+        document.getElementById("wantsEstAmount").innerText = "$" + (wantsEstAmount).toFixed(2);
+        document.getElementById("savingsEstAmount").innerText = "$" + (savingsEstAmount).toFixed(2);
+
+        let needsAmountLeftOver = needsEstAmount - needsAmount;
+        let wantsAmountLeftOver = wantsEstAmount - wantsAmount;
+        let savingsAmountLeftOver = savingsEstAmount - savingsAmount;
+
+        document.getElementById("needsAmountLeftOver").textContent = "$" + needsAmountLeftOver.toFixed(2)
+        document.getElementById("wantsAmountLeftOver").textContent = "$" + wantsAmountLeftOver.toFixed(2)
+        document.getElementById("savingsAmountLeftOver").textContent = "$" + savingsAmountLeftOver.toFixed(2)
+
+        if(needsAmountLeftOver < 0){
+            document.getElementById("needsAmountLeftOver").style.color = "red";
+        }
+
+        if(wantsAmountLeftOver < 0){
+            document.getElementById("wantsAmountLeftOver").style.color = "red";
+        }
+
+        if(savingsAmountLeftOver < 0){
+            document.getElementById("savingsAmountLeftOver").style.color = "red";
+        }
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>

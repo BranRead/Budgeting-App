@@ -14,10 +14,12 @@ import static com.brandon.dontspenditall_inoneplace.database.MySQLConnection.get
 
 public class IncomeDAOImp implements IncomeDAO {
     private static final String SQL_SELECT = "SELECT * FROM income WHERE user_id = ?";
+
+    private static final String SQL_SELECT_ONE = "SELECT * FROM income WHERE income_id = ?";
     private static final String  SQL_INSERT = "INSERT INTO income (user_id, name, amount, transaction_date) VALUES(?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE income " +
-            "SET name = ?, amount = ?, transaction_date = ? WHERE expense_id = ?";
-    private static final String SQL_DELETE = "DELETE FROM expenses WHERE expense_id = ?";
+            "SET name = ?, amount = ?, transaction_date = ? WHERE income_id = ?";
+    private static final String SQL_DELETE = "DELETE FROM income WHERE income_id = ?";
     @Override
     public ArrayList<Income> selectAll(int user_id) throws SQLException {
         Connection conn = null;
@@ -32,6 +34,7 @@ public class IncomeDAOImp implements IncomeDAO {
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()) {
                 Income income = new Income();
+                income.setId(rs.getInt("income_id"));
                 income.setUserId(user_id);
                 income.setName(rs.getString("name"));
                 income.setAmount(rs.getDouble("amount"));
@@ -47,6 +50,33 @@ public class IncomeDAOImp implements IncomeDAO {
             incomes.add(income);
         }
         return incomes;
+    }
+
+    @Override
+    public Income select(int income_id) throws SQLException {
+        Connection conn = null;
+        PreparedStatement preparedStatement = null;
+        Income income = new Income();
+
+        try {
+            conn = getConnection();
+            preparedStatement = conn.prepareStatement(SQL_SELECT_ONE);
+
+            preparedStatement.setInt(1, income_id);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            rs.next();
+            income.setId(rs.getInt("income_id"));
+            income.setName(rs.getString("name"));
+            income.setAmount(rs.getDouble("amount"));
+            income.setTransaction_date(rs.getDate("transaction_date"));
+
+
+        } catch (Exception exception) {
+            System.out.println("Error: " + exception.getMessage());
+            income.setName(exception.getMessage());
+        }
+        return income;
     }
 
     @Override
@@ -87,13 +117,13 @@ public class IncomeDAOImp implements IncomeDAO {
     }
 
     @Override
-    public void delete(Income income) throws SQLException {
+    public void delete(int incomeId) throws SQLException {
         Connection conn = null;
         PreparedStatement preparedStatement = null;
         try {
             conn = getConnection();
             preparedStatement = conn.prepareStatement(SQL_DELETE);
-            preparedStatement.setInt(1, income.getId());
+            preparedStatement.setInt(1, incomeId);
             preparedStatement.executeUpdate();
         } catch (Exception exception) {
             System.out.println("Error: " + exception.getMessage());

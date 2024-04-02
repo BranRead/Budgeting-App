@@ -39,20 +39,31 @@ public class LoginController extends HttpServlet {
 
     private void select(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
         User user = loginDAOImp.select(request.getParameter("username"), request.getParameter("password"));
-        ArrayList<Expense> expenses = expenseDAOImp.selectAll(user.getId());
-        BudgetSettings budgetSettings = budgetDAOImp.select(user.getId());
-        ArrayList<Income> incomes = incomeDAOImp.selectAll(user.getId());
+
         if(user != null) {
-            request.setAttribute("user", user);
+
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
+
+            BudgetSettings budgetSettings = budgetDAOImp.select(user.getId());
             session.setAttribute("budget", budgetSettings);
+
+            ArrayList<Expense> expenses = expenseDAOImp.selectAll(user.getId());
             session.setAttribute("expenses", expenses);
+
+            ArrayList<Income> incomes = incomeDAOImp.selectAll(user.getId());
             session.setAttribute("incomes", incomes);
+
             RequestDispatcher dispatcher = request.getRequestDispatcher("/main.jsp");
             dispatcher.include(request, response);
             dispatcher.forward(request, response);
             response.sendRedirect("/main.jsp");
+        } else {
+            request.setAttribute("errorLoggingIn", "Wrong username or password");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+            dispatcher.include(request, response);
+            dispatcher.forward(request, response);
+            response.sendRedirect("/index.jsp");
         }
     }
 

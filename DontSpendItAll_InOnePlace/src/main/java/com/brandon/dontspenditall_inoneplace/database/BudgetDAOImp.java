@@ -47,19 +47,24 @@ public class BudgetDAOImp implements BudgetDAO {
     }
 
     @Override
-    public void add(BudgetSettings budgetSettings) throws SQLException {
+    public void add(BudgetSettings budgetSettings, boolean isUpdate) throws SQLException {
         Connection conn = null;
         PreparedStatement preparedStatement = null;
-        try {
-            conn = getConnection();
-            preparedStatement = conn.prepareStatement(SQL_INSERT);
-            preparedStatement.setInt(1, budgetSettings.getUserId());
-            preparedStatement.setInt(2, budgetSettings.getNeeds());
-            preparedStatement.setInt(3, budgetSettings.getWants());
-            preparedStatement.setInt(4, budgetSettings.getSavings());
-            preparedStatement.executeUpdate();
-        } catch (Exception exception) {
-            System.out.println("Error: " + exception.getMessage());
+
+        if(isUpdate){
+            update(budgetSettings);
+        } else {
+            try {
+                conn = getConnection();
+                preparedStatement = conn.prepareStatement(SQL_INSERT);
+                preparedStatement.setInt(1, budgetSettings.getUserId());
+                preparedStatement.setInt(2, budgetSettings.getNeeds());
+                preparedStatement.setInt(3, budgetSettings.getWants());
+                preparedStatement.setInt(4, budgetSettings.getSavings());
+                preparedStatement.executeUpdate();
+            } catch (Exception exception) {
+                System.out.println("Error: " + exception.getMessage());
+            }
         }
     }
 

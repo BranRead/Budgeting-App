@@ -14,9 +14,9 @@ import static com.brandon.dontspenditall_inoneplace.database.MySQLConnection.get
 public class ExpenseDAOImp implements ExpenseDAO {
     private static final String SQL_SELECT_All = "SELECT * FROM expenses WHERE user_id = ?";
     private static final String SQL_SELECT = "SELECT * FROM expenses WHERE expense_id = ?";
-//    private static final String SQL_SELECT_income = "SELECT * FROM income WHERE user_id = ?";
+
     private static final String  SQL_INSERT = "INSERT INTO expenses (user_id, name, amount, tag, transaction_date) VALUES(?, ?, ?, ?, ?)";
-//    private static final String  SQL_INSERT_income = "INSERT INTO income (user_id, name, amount, tag, transaction_date) VALUES(?, ?, ?, ?, ?)";
+
     private static final String SQL_UPDATE = "UPDATE expenses " +
             "SET name = ?, amount = ?, tag = ?, transaction_date = ? WHERE expense_id = ?";
     private static final String SQL_DELETE = "DELETE FROM expenses WHERE expense_id = ?";

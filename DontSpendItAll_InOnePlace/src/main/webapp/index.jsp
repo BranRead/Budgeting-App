@@ -23,6 +23,12 @@
 
                 <button class="btn btn-primary my-2" type="submit">Login</button>
             </form>
+            <c:choose>
+                <c:when test="${requestScope.errorLoggingIn != null}">
+                    <p><c:out value="${requestScope.errorLoggingIn}"/></p>
+                </c:when>
+            </c:choose>
+            <p></p>
         </div>
     </div>
 </div>

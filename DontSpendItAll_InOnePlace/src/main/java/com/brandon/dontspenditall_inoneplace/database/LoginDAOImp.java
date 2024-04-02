@@ -28,8 +28,10 @@ public class LoginDAOImp implements LoginDAO {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, password);
             rs = preparedStatement.executeQuery();
+            rs.next();
 
-            if(rs.next()){
+            //This is NOT always true, ignore error
+            if(rs != null){
                 loggedInUser = new User(
                         rs.getInt("user_id"),
                         rs.getString("f_name"),
@@ -39,12 +41,6 @@ public class LoginDAOImp implements LoginDAO {
             }
 
         } catch (Exception exception){
-            loggedInUser = new User(
-                    0,
-                    "Error: ",
-                    exception.getMessage(),
-                    "Error"
-            );
             System.out.println("Error: " + exception.getMessage());
         }
         return loggedInUser;
