@@ -15,6 +15,7 @@ import static com.brandon.dontspenditall_inoneplace.database.MySQLConnection.get
 
 public class ExpenseDAOImp implements ExpenseDAO {
     private static final String SQL_SELECT_All = "SELECT * FROM expenses WHERE user_id = ?";
+    private static final String SQL_SELECT_All_DATES = "SELECT DISTINCT transaction_date FROM expenses WHERE user_id = ?";
     private static final String SQL_SELECT = "SELECT * FROM expenses WHERE expense_id = ?";
 
     private static final String  SQL_INSERT = "INSERT INTO expenses (user_id, name, amount, tag, transaction_date, is_repeating) VALUES(?, ?, ?, ?, ?, ?)";
@@ -39,7 +40,7 @@ public class ExpenseDAOImp implements ExpenseDAO {
                 expense.setTransaction_date(rs.getDate("transaction_date"));
                 expense.setRepeating(rs.getInt("is_repeating") == 1);
                 Date dateOfTransaction = expense.getTransaction_date();
-
+                ArrayList<Calendar> datesOfRecords = new ArrayList<>();
 
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(dateOfTransaction);
@@ -75,6 +76,59 @@ public class ExpenseDAOImp implements ExpenseDAO {
         return expenses;
     }
 
+    @Override
+    public ArrayList<Date> selectAllDates(int user_id, Calendar currentDisplayedDate) throws SQLException {
+        Connection conn = null;
+        PreparedStatement preparedStatement = null;
+        ArrayList<Date> datesOfRecords = new ArrayList<>();
+        try {
+            conn = getConnection();
+            preparedStatement = conn.prepareStatement(SQL_SELECT_All_DATES);
+
+            preparedStatement.setInt(1, user_id);
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()) {
+                Date sqlDate = rs.getDate("transaction_date");
+                java.util.Date dateOfTransaction = new java.util.Date(sqlDate.getTime());
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(dateOfTransaction);
+
+                int yearOfTransaction = calendar.get(Calendar.YEAR);
+                int monthOfTransaction = calendar.get(Calendar.MONTH);
+
+                int yearCurrentDisplayed = currentDisplayedDate.get(Calendar.YEAR);
+                int monthCurrentDisplayed = currentDisplayedDate.get(Calendar.MONTH);
+
+                if(yearOfTransaction != yearCurrentDisplayed || monthOfTransaction != monthCurrentDisplayed){
+                    boolean isUnique = true;
+
+                    //This works because the first element added will be unique
+                    //The first element doesn't need to be compared to anything
+                    //It gets added and the index is incremented.
+                    //It's greater than the
+                    int index = 0;
+                    while(isUnique && index < datesOfRecords.size()){
+                        Calendar calendarOfRecord = Calendar.getInstance();
+                        calendarOfRecord.setTime(datesOfRecords.get(index));
+                        int yearInList = calendarOfRecord.get(Calendar.YEAR);
+                        int monthInList = calendarOfRecord.get(Calendar.MONTH);
+                        if(yearInList == yearOfTransaction && monthInList == monthOfTransaction){
+                            isUnique = false;
+                        }
+                        index++;
+                    }
+                    if(isUnique){
+                        datesOfRecords.add(dateOfTransaction);
+                    }
+                }
+            }
+        } catch (Exception exception) {
+            System.out.println("Error: " + exception.getMessage());
+
+        }
+        return datesOfRecords;
+    }
 
 
     @Override

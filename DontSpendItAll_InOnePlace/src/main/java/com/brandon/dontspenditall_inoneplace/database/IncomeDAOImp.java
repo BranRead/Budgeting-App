@@ -16,7 +16,6 @@ import static com.brandon.dontspenditall_inoneplace.database.MySQLConnection.get
 
 public class IncomeDAOImp implements IncomeDAO {
     private static final String SQL_SELECT = "SELECT * FROM income WHERE user_id = ?";
-
     private static final String SQL_SELECT_ONE = "SELECT * FROM income WHERE income_id = ?";
     private static final String  SQL_INSERT = "INSERT INTO income (user_id, name, amount, transaction_date, is_repeating) VALUES(?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE income " +

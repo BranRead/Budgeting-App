@@ -4,6 +4,7 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import com.brandon.dontspenditall_inoneplace.database.BudgetDAOImp;
 import com.brandon.dontspenditall_inoneplace.database.IncomeDAOImp;
@@ -53,8 +54,11 @@ public class LoginController extends HttpServlet {
             ArrayList<Expense> expenses = expenseDAOImp.selectAll(user.getId(), dateNow);
             session.setAttribute("expenses", expenses);
 
-            ArrayList<Income> incomes = incomeDAOImp.selectAll(user.getId());
+            ArrayList<Income> incomes = incomeDAOImp.selectAll(user.getId(), dateNow);
             session.setAttribute("incomes", incomes);
+
+            ArrayList<Date> datesOfEntries = expenseDAOImp.selectAllDates(user.getId(), dateNow);
+            session.setAttribute("datesOfEntries", datesOfEntries);
 
             RequestDispatcher dispatcher = request.getRequestDispatcher("/main.jsp");
             dispatcher.include(request, response);

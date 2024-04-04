@@ -1,3 +1,4 @@
+<%@ page import="java.util.Calendar" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%--
   Created by IntelliJ IDEA.
@@ -207,11 +208,64 @@
         </div>
     </div>
 
-    <c:choose>
-        <c:when test="${sessionScope.month != null}">
-            <a></a>
-        </c:when>
-    </c:choose>
+    <label for="previousMonths">Previous Months:</label>
+    <select name="monthToGet" id="previousMonths">
+    </select>
+
+    <c:forEach var="date" items="${sessionScope.datesOfEntries}">
+
+
+
+        <script>
+            {
+                console.log(date);
+                let option = document.createElement("option");
+                option.name = "date";
+                option.value = "date";
+                document.getElementById("previousMonths").appendChild(option);
+                switch (date.getMonth()) {
+                    case 0:
+                        option.textContent = "January, " + date.getFullYear();
+                        break;
+                    case 1:
+                        option.textContent = "February, " + date.getFullYear();
+                        break;
+                    case 2:
+                        option.textContent = "March, " + date.getFullYear();
+                        break;
+                    case 3:
+                        option.textContent = "April, " + date.getFullYear();
+                        break;
+                    case 4:
+                        option.textContent = "May, " + date.getFullYear();
+                        break;
+                    case 5:
+                        option.textContent = "June, " + date.getFullYear();
+                        break;
+                    case 6:
+                        option.textContent = "July, " + date.getFullYear();
+                        break;
+                    case 7:
+                        option.textContent = "August, " + date.getFullYear();
+                        break;
+                    case 8:
+                        option.textContent = "September, " + date.getFullYear();
+                        break;
+                    case 9:
+                        option.textContent = "October, " + date.getFullYear();
+                        break;
+                    case 10:
+                        option.textContent = "November, " + date.getFullYear();
+                        break;
+                    case 11:
+                        option.textContent = "December, " + date.getFullYear();
+                        break;
+                }
+            }
+        </script>
+
+    </c:forEach>
+
 
     <div class="container">
         <div class="row d-flex flex-row justify-content-center">
