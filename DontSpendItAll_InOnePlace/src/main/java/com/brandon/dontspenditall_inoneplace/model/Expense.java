@@ -5,8 +5,8 @@ import java.sql.Date;
 public class Expense extends Transaction{
     private String tag;
 
-    public Expense(int id, int userId, String name, double amount, Date transaction_date, String tag) {
-        super(id, userId, name, amount, transaction_date);
+    public Expense(int id, int userId, String name, double amount, Date transaction_date, String tag, boolean isRepeating) {
+        super(id, userId, name, amount, transaction_date, isRepeating);
         this.tag = tag;
     }
 

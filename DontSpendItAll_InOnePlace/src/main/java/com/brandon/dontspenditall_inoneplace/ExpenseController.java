@@ -1,19 +1,21 @@
 package com.brandon.dontspenditall_inoneplace;
 
-import java.io.*;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Objects;
-
 import com.brandon.dontspenditall_inoneplace.database.ExpenseDAOImp;
 import com.brandon.dontspenditall_inoneplace.model.Expense;
-import com.brandon.dontspenditall_inoneplace.model.Transaction;
 import com.brandon.dontspenditall_inoneplace.model.User;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Objects;
 
 @WebServlet(name = "ExpenseControllerServlet", value = "/Expense")
 public class ExpenseController extends HttpServlet {
@@ -79,6 +81,7 @@ public class ExpenseController extends HttpServlet {
         expense.setAmount(Double.parseDouble(request.getParameter("amount")));
         expense.setTag(request.getParameter("tag"));
         expense.setTransaction_date(Date.valueOf(request.getParameter("date")));
+        expense.setRepeating(Objects.equals(request.getParameter("repeating"), "true"));
         expenseDAOImp.add(expense);
 
         refresh(request);
@@ -95,6 +98,7 @@ public class ExpenseController extends HttpServlet {
         expense.setAmount(Double.parseDouble(request.getParameter("amount")));
         expense.setTag(request.getParameter("tag"));
         expense.setTransaction_date(Date.valueOf(request.getParameter("date")));
+        expense.setRepeating(Objects.equals(request.getParameter("repeating"), "true"));
         expense.setId(Integer.parseInt(request.getParameter("editId")));
 
         expenseDAOImp.update(expense);
@@ -116,7 +120,8 @@ public class ExpenseController extends HttpServlet {
 
     private void refresh(HttpServletRequest request) throws SQLException {
         User user = (User) request.getSession().getAttribute("user");
-        ArrayList<Expense> expenses = expenseDAOImp.selectAll(user.getId());
+        Calendar dateNow = Calendar.getInstance();
+        ArrayList<Expense> expenses = expenseDAOImp.selectAll(user.getId(), dateNow);
         request.getSession().setAttribute("expenses", expenses);
     }
 

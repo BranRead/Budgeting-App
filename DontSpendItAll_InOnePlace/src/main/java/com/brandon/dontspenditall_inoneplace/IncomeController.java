@@ -4,6 +4,7 @@ import java.io.*;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Objects;
 
 import com.brandon.dontspenditall_inoneplace.database.IncomeDAOImp;
@@ -63,6 +64,7 @@ public class IncomeController extends HttpServlet {
         income.setName(request.getParameter("name"));
         income.setAmount(Double.parseDouble(request.getParameter("amount")));
         income.setTransaction_date(Date.valueOf(request.getParameter("date")));
+        income.setRepeating(Objects.equals(request.getParameter("repeating"), "true"));
 
         incomeDAOImp.add(income);
 
@@ -94,6 +96,7 @@ public class IncomeController extends HttpServlet {
         income.setAmount(Double.parseDouble(request.getParameter("amount")));
 
         income.setTransaction_date(Date.valueOf(request.getParameter("date")));
+        income.setRepeating(Objects.equals(request.getParameter("repeating"), "true"));
         income.setId(Integer.parseInt(request.getParameter("editId")));
 
         incomeDAOImp.update(income);
@@ -115,7 +118,8 @@ public class IncomeController extends HttpServlet {
 
     private void refresh(HttpServletRequest request) throws SQLException {
         User user = (User) request.getSession().getAttribute("user");
-        ArrayList<Income> incomes = incomeDAOImp.selectAll(user.getId());
+        Calendar dateToFind = Calendar.getInstance();
+        ArrayList<Income> incomes = incomeDAOImp.selectAll(user.getId(), dateToFind);
         request.getSession().setAttribute("incomes", incomes);
     }
 

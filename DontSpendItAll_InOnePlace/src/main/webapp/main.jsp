@@ -138,6 +138,11 @@
                             document.getElementById("date").setAttribute("value", currentDate);
                         </script>
 
+                        <input class="form-check-input" type="checkbox" name="repeating" value="true" id="incomeCheckbox">
+                        <label class="form-check-label" for="incomeCheckbox">
+                            Repeating Income?
+                        </label>
+
                         <button class="btn btn-primary" type="submit">Submit</button>
                     </form>
 
@@ -190,6 +195,11 @@
                             document.getElementById("date").setAttribute("value", currentDate);
                         </script>
 
+                        <input class="form-check-input" type="checkbox" name="repeating" value="true" id="expenseCheckbox">
+                        <label class="form-check-label" for="expenseCheckbox">
+                            Repeating Expense?
+                        </label>
+
                         <button class="btn btn-primary" type="submit">Submit</button>
                     </form>
                 </div>
@@ -197,12 +207,20 @@
         </div>
     </div>
 
+    <c:choose>
+        <c:when test="${sessionScope.month != null}">
+            <a></a>
+        </c:when>
+    </c:choose>
+
     <div class="container">
         <div class="row d-flex flex-row justify-content-center">
             <h3 class="text-center">Income Sources</h3>
             <c:choose>
                 <c:when test="${requestScope.editIncome == true}">
+
                     <div class="col-lg-2">
+                        <h3>Edit Income</h3>
                         <form method="post" action="Income">
                             <label for="nameEditIncome">Name:</label>
                             <input type="text" id="nameEditIncome" name="name" value="${requestScope.incomeToEdit.getName()}">
@@ -215,29 +233,27 @@
 
                             <input type="date" id="dateEditIncome" name="date" value="${requestScope.incomeToEdit.getTransaction_date()}"/>
 
+                            <input class="form-check-input" type="checkbox" name="repeating" value="true" id="incomeCheckboxEdit">
+                            <label class="form-check-label" for="incomeCheckboxEdit">
+                                Repeating Income?
+                            </label>
+
+                            <script>
+                                if("${requestScope.incomeToEdit.isRepeating()}" === "true"){
+                                    document.getElementById("incomeCheckboxEdit").checked = true;
+                                }
+                            </script>
+
                             <button type="submit" name="editId" value="${requestScope.incomeToEdit.getId()}">Submit</button>
                         </form>
                         <form action="Expense" method="get"><button name="refresh" value="true" type="submit">Exit</button></form>
                     </div>
                 </c:when>
             </c:choose>
-            <div class="col-lg-4">
-                <table id="incomeSources" class="table">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Amount</th>
-                    </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-        <div class="row d-flex flex-row justify-content-center">
-            <h3 class="text-center">Expenses</h3>
-
             <c:choose>
                 <c:when test="${requestScope.edit == true}">
                     <div class="col-lg-2">
+                        <h3>Edit Expense</h3>
                         <form method="post" action="Expense">
                             <label for="nameEdit">Name:</label>
                             <input type="text" id="nameEdit" name="name" value="${requestScope.expenseToEdit.getName()}">
@@ -269,13 +285,36 @@
 
                             <input type="date" id="dateEdit" name="date" value="${requestScope.expenseToEdit.getTransaction_date()}"/>
 
+                            <input class="form-check-input" type="checkbox" name="repeating" value="true" id="expenseCheckboxEdit">
+                            <label class="form-check-label" for="expenseCheckboxEdit">
+                                Repeating Income?
+                            </label>
+
+                            <script>
+                                if("${requestScope.expenseToEdit.isRepeating()}" === "true"){
+                                    document.getElementById("expenseCheckboxEdit").checked = true;
+                                }
+                            </script>
+
                             <button type="submit" name="editId" value="${requestScope.expenseToEdit.getId()}">Submit</button>
                         </form>
                         <form action="Expense" method="get"><button name="refresh" value="true" type="submit">Exit</button></form>
                     </div>
                 </c:when>
             </c:choose>
-
+            <div class="col-lg-4">
+                <table id="incomeSources" class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Amount</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="row d-flex flex-row justify-content-center">
+            <h3 class="text-center">Expenses</h3>
             <div class="col-lg-3">
                 <table id="needs" class="table">
                     <thead>
@@ -405,7 +444,10 @@
 
     <c:forEach var="expense" items="${sessionScope.expenses}">
         <script>
+
+
             if("${expense.getTag()}" === "need"){
+
                 let amountFormatted = parseFloat(${expense.getAmount()}).toFixed(2);
                 let table = document.getElementById("needs");
                 let row = table.insertRow(-1);

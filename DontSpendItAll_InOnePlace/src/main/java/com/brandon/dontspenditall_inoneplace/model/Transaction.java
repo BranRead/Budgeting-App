@@ -8,13 +8,15 @@ public class Transaction {
     private String name;
     private double amount;
     private Date transaction_date;
+    private boolean isRepeating;
 
-    public Transaction(int id, int userId, String name, double amount, Date transaction_date) {
+    public Transaction(int id, int userId, String name, double amount, Date transaction_date, boolean isRepeating) {
         this.id = id;
         this.userId = userId;
         this.name = name;
         this.amount = amount;
         this.transaction_date = transaction_date;
+        this.isRepeating = isRepeating;
     }
 
     public Transaction() {
@@ -58,5 +60,13 @@ public class Transaction {
 
     public void setTransaction_date(Date transaction_date) {
         this.transaction_date = transaction_date;
+    }
+
+    public boolean isRepeating() {
+        return isRepeating;
+    }
+
+    public void setRepeating(boolean repeating) {
+        isRepeating = repeating;
     }
 }

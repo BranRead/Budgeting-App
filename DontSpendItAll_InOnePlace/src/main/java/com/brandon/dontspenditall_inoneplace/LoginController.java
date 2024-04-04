@@ -3,6 +3,7 @@ package com.brandon.dontspenditall_inoneplace;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import com.brandon.dontspenditall_inoneplace.database.BudgetDAOImp;
 import com.brandon.dontspenditall_inoneplace.database.IncomeDAOImp;
@@ -48,7 +49,8 @@ public class LoginController extends HttpServlet {
             BudgetSettings budgetSettings = budgetDAOImp.select(user.getId());
             session.setAttribute("budget", budgetSettings);
 
-            ArrayList<Expense> expenses = expenseDAOImp.selectAll(user.getId());
+            Calendar dateNow = Calendar.getInstance();
+            ArrayList<Expense> expenses = expenseDAOImp.selectAll(user.getId(), dateNow);
             session.setAttribute("expenses", expenses);
 
             ArrayList<Income> incomes = incomeDAOImp.selectAll(user.getId());
