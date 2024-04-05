@@ -14,262 +14,288 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
-    <h1>Welcome: <c:out value="${sessionScope.user.getfName()}"/> <c:out value="${sessionScope.user.getlName()}"/></h1>
 
-    <h4 id="income">Income: </h4>
 
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#budgetModal">
-        Change Budget Breakdown
-    </button>
+<div class="container">
 
-    <!-- Modal -->
-    <div class="modal fade" id="budgetModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Budget Breakdown</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="row d-flex flex-row justify-content-center">
+        <div class="col-lg-8">
+            <h2 class="text-center">Welcome: <c:out value="${sessionScope.user.getfName()}"/> <c:out value="${sessionScope.user.getlName()}"/></h2>
+        </div>
+    </div>
+
+    <div class="row d-flex flex-row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex flex-row justify-content-center">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#budgetModal">
+                    Change Budget Breakdown
+                </button>
+
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#incomeModal">
+                    Add Income
+                </button>
+
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#expenseModal">
+                    Add Expense
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="budgetModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Budget Breakdown</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="Budget" method="post">
+
+                                    <label for="needsPercent" class="form-label">Needs Percent</label>
+                                    <c:choose>
+                                        <c:when test="${sessionScope.budget == null}">
+                                            <input type="range" name="needsPercent" class="form-range" min="0" max="100" step="5" value="50" id="needsPercent">
+                                            <%--                        <p id="needsPercentDisplayPlus"></p>--%>
+                                            <p id="needsPercentDisplay">50%</p>
+                                            <%--                        <p id="needsPercentDisplayMinus"></p>--%>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <input type="range" name="needsPercent" class="form-range" min="0" max="100" step="5" value="${sessionScope.budget.getNeeds()}" id="needsPercent">
+                                            <%--                        <p id="needsPercentDisplayPlus"></p>--%>
+                                            <p id="needsPercentDisplay"><c:out value="${sessionScope.budget.getNeeds()}" />%</p>
+                                            <%--                        <p id="needsPercentDisplayMinus"></p>--%>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <script>
+                                        document.getElementById("needsPercent").addEventListener("input", function (e) {
+                                            // let value = this.value;
+                                            // document.getElementById("needsPercentDisplayPlus").textContent = (value + 5) + "%";
+                                            document.getElementById("needsPercentDisplay").textContent = this.value + "%";
+                                            // document.getElementById("needsPercentDisplayMinus").textContent = value - 5 + "%";
+                                        })
+                                    </script>
+
+                                    <label for="wantsPercent" class="form-label">Wants Percent</label>
+
+                                    <c:choose>
+                                        <c:when test="${sessionScope.budget == null}">
+                                            <input type="range" name="wantsPercent" class="form-range" min="0" max="100" step="5" value="30" id="wantsPercent">
+                                            <p id="wantsPercentDisplay">30%</p>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <input type="range" name="wantsPercent" class="form-range" min="0" max="100" step="5" value="${sessionScope.budget.getWants()}" id="wantsPercent">
+                                            <p id="wantsPercentDisplay"><c:out value="${sessionScope.budget.getWants()}"/>%</p>
+                                        </c:otherwise>
+                                    </c:choose>
+
+                                    <script>
+                                        document.getElementById("wantsPercent").addEventListener("input", function (e) {
+                                            document.getElementById("wantsPercentDisplay").textContent = this.value + "%";
+                                        })
+                                    </script>
+
+                                    <label for="savingsPercent" class="form-label">Savings Percent</label>
+                                    <c:choose>
+                                        <c:when test="${sessionScope.budget == null}">
+                                            <input type="range" name="savingsPercent" class="form-range" min="0" max="100" step="5" value="20" id="savingsPercent">
+                                            <p id="savingsPercentDisplay">20%</p>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <input type="range" name="savingsPercent" class="form-range" min="0" max="100" step="5" value="${sessionScope.budget.getSavings()}" id="savingsPercent">
+                                            <p id="savingsPercentDisplay"><c:out value="${sessionScope.budget.getSavings()}"/>%</p>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <script>
+                                        document.getElementById("savingsPercent").addEventListener("input", function (e) {
+                                            document.getElementById("savingsPercentDisplay").textContent = this.value + "%";
+                                        })
+                                    </script>
+
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <form action="Budget" method="post">
 
-                        <label for="needsPercent" class="form-label">Needs Percent</label>
-                        <c:choose>
-                            <c:when test="${sessionScope.budget == null}">
-                                <input type="range" name="needsPercent" class="form-range" min="0" max="100" step="5" value="50" id="needsPercent">
-                                <%--                        <p id="needsPercentDisplayPlus"></p>--%>
-                                <p id="needsPercentDisplay">50%</p>
-                                <%--                        <p id="needsPercentDisplayMinus"></p>--%>
-                            </c:when>
-                            <c:otherwise>
-                                <input type="range" name="needsPercent" class="form-range" min="0" max="100" step="5" value="${sessionScope.budget.getNeeds()}" id="needsPercent">
-                                <%--                        <p id="needsPercentDisplayPlus"></p>--%>
-                                <p id="needsPercentDisplay"><c:out value="${sessionScope.budget.getNeeds()}" />%</p>
-                                <%--                        <p id="needsPercentDisplayMinus"></p>--%>
-                            </c:otherwise>
-                        </c:choose>
-                        <script>
-                            document.getElementById("needsPercent").addEventListener("input", function (e) {
-                                // let value = this.value;
-                                // document.getElementById("needsPercentDisplayPlus").textContent = (value + 5) + "%";
-                                document.getElementById("needsPercentDisplay").textContent = this.value + "%";
-                                // document.getElementById("needsPercentDisplayMinus").textContent = value - 5 + "%";
-                            })
-                        </script>
 
-                        <label for="wantsPercent" class="form-label">Wants Percent</label>
 
-                        <c:choose>
-                            <c:when test="${sessionScope.budget == null}">
-                                <input type="range" name="wantsPercent" class="form-range" min="0" max="100" step="5" value="30" id="wantsPercent">
-                                <p id="wantsPercentDisplay">30%</p>
-                            </c:when>
-                            <c:otherwise>
-                                <input type="range" name="wantsPercent" class="form-range" min="0" max="100" step="5" value="${sessionScope.budget.getWants()}" id="wantsPercent">
-                                <p id="wantsPercentDisplay"><c:out value="${sessionScope.budget.getWants()}"/>%</p>
-                            </c:otherwise>
-                        </c:choose>
+                <!-- Modal -->
+                <div class="modal fade" id="incomeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Income</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="Income" method="post">
 
-                        <script>
-                            document.getElementById("wantsPercent").addEventListener("input", function (e) {
-                                document.getElementById("wantsPercentDisplay").textContent = this.value + "%";
-                            })
-                        </script>
+                                    <label for="nameIncome">Name:</label>
+                                    <input type="text" id="nameIncome" name="name">
 
-                        <label for="savingsPercent" class="form-label">Savings Percent</label>
-                        <c:choose>
-                            <c:when test="${sessionScope.budget == null}">
-                                <input type="range" name="savingsPercent" class="form-range" min="0" max="100" step="5" value="20" id="savingsPercent">
-                                <p id="savingsPercentDisplay">20%</p>
-                            </c:when>
-                            <c:otherwise>
-                                <input type="range" name="savingsPercent" class="form-range" min="0" max="100" step="5" value="${sessionScope.budget.getSavings()}" id="savingsPercent">
-                                <p id="savingsPercentDisplay"><c:out value="${sessionScope.budget.getSavings()}"/>%</p>
-                            </c:otherwise>
-                        </c:choose>
-                        <script>
-                            document.getElementById("savingsPercent").addEventListener("input", function (e) {
-                                document.getElementById("savingsPercentDisplay").textContent = this.value + "%";
-                            })
-                        </script>
 
-                        <button class="btn btn-primary" type="submit">Submit</button>
-                    </form>
+                                    <label for="amountIncome">Amount:</label>
+                                    <input type="number" id="amountIncome" name="amount" step="0.01">
 
+                                    <label for="dateIncome">Transaction date:</label>
+
+                                    <input type="date" id="dateIncome" name="date" value=""/>
+                                    <script>
+                                        const date = new Date();
+                                        let day = date.getDate();
+                                        let month = date.getMonth();
+                                        let year = date.getFullYear();
+
+                                        let currentDate = day + "-" + (month + 1) + "-" + year;
+
+                                        document.getElementById("date").setAttribute("value", currentDate);
+                                    </script>
+
+                                    <input class="form-check-input" type="checkbox" name="repeating" value="true" id="incomeCheckbox">
+                                    <label class="form-check-label" for="incomeCheckbox">
+                                        Repeating Income?
+                                    </label>
+
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Modal -->
+                <div class="modal fade" id="expenseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Expense</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="Expense" method="post">
+
+                                    <label for="name">Name:</label>
+                                    <input type="text" id="name" name="name">
+
+                                    <label for="tags">Choose a tag:</label>
+                                    <select id="tags" name="tag">
+                                        <option>-Choose a tag-</option>
+                                        <option value="need">Need</option>
+                                        <option value="want">Want</option>
+                                        <option value="savings">Savings</option>
+                                    </select>
+
+                                    <label for="amount">Amount:</label>
+                                    <input type="number" id="amount" name="amount" step="0.01">
+
+                                    <label for="date">Transaction date:</label>
+
+                                    <input type="date" id="date" name="date" value=""/>
+                                    <script>
+                                        const date = new Date();
+                                        let day = date.getDate();
+                                        let month = date.getMonth();
+                                        let year = date.getFullYear();
+
+                                        let currentDate = day + "-" + (month + 1) + "-" + year;
+
+                                        document.getElementById("date").setAttribute("value", currentDate);
+                                    </script>
+
+                                    <input class="form-check-input" type="checkbox" name="repeating" value="true" id="expenseCheckbox">
+                                    <label class="form-check-label" for="expenseCheckbox">
+                                        Repeating Expense?
+                                    </label>
+
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#incomeModal">
-        Add Income
-    </button>
 
-    <!-- Modal -->
-    <div class="modal fade" id="incomeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Income</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="Income" method="post">
+    <div class="row d-flex flex-row justify-content-center">
+        <div class="col-lg-4">
 
-                        <label for="nameIncome">Name:</label>
-                        <input type="text" id="nameIncome" name="name">
-
-
-                        <label for="amountIncome">Amount:</label>
-                        <input type="number" id="amountIncome" name="amount" step="0.01">
-
-                        <label for="dateIncome">Transaction date:</label>
-
-                        <input type="date" id="dateIncome" name="date" value=""/>
-                        <script>
-                            const date = new Date();
-                            let day = date.getDate();
-                            let month = date.getMonth();
-                            let year = date.getFullYear();
-
-                            let currentDate = day + "-" + (month + 1) + "-" + year;
-
-                            document.getElementById("date").setAttribute("value", currentDate);
-                        </script>
-
-                        <input class="form-check-input" type="checkbox" name="repeating" value="true" id="incomeCheckbox">
-                        <label class="form-check-label" for="incomeCheckbox">
-                            Repeating Income?
-                        </label>
-
-                        <button class="btn btn-primary" type="submit">Submit</button>
-                    </form>
-
-                </div>
-            </div>
+            <script>
+                function formatJavaDate(textToDisplay, dateToFormatMonth, dateToFormatYear){
+                    switch (dateToFormatMonth) {
+                        case "0":
+                            textToDisplay.textContent += "January, " + dateToFormatYear;
+                            break;
+                        case "1":
+                            textToDisplay.textContent += "February, " + dateToFormatYear;
+                            break;
+                        case "2":
+                            textToDisplay.textContent += "March, " + dateToFormatYear;
+                            break;
+                        case "3":
+                            textToDisplay.textContent += "April, " + dateToFormatYear;
+                            break;
+                        case "4":
+                            textToDisplay.textContent += "May, " + dateToFormatYear;
+                            break;
+                        case "5":
+                            textToDisplay.textContent += "June, " + dateToFormatYear;
+                            break;
+                        case "6":
+                            textToDisplay.textContent += "July, " + dateToFormatYear;
+                            break;
+                        case "7":
+                            textToDisplay.textContent += "August, " + dateToFormatYear;
+                            break;
+                        case "8":
+                            textToDisplay.textContent += "September, " + dateToFormatYear;
+                            break;
+                        case "9":
+                            textToDisplay.textContent += "October, " + dateToFormatYear;
+                            break;
+                        case "10":
+                            textToDisplay.textContent += "November, " + dateToFormatYear;
+                            break;
+                        case "11":
+                            textToDisplay.textContent += "December, " + dateToFormatYear;
+                            break;
+                    }
+                }
+            </script>
+            <div class="d-flex flex-column"><h3 id="displayedDate" class="text-center">Finances for the month of:<br></h3></div>
+            <script>
+                console.log("Displayed Month: " + "${sessionScope.displayedDate.getMonth()}");
+                formatJavaDate(document.getElementById("displayedDate"), "${sessionScope.displayedDate.getMonth()}", "${sessionScope.displayedDate.getYear() + 1900}");
+            </script>
+            <form class="align-items-center" action="PastMonths" method="get">
+                <label for="previousMonths">Other Months:</label>
+                <select name="monthToGet" id="previousMonths">
+                    <option>--Select a Month--</option>
+                </select>
+                <button type="submit" class="btn btn-primary">See</button>
+            </form>
         </div>
     </div>
-
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#expenseModal">
-        Add Expense
-    </button>
-
-    <!-- Modal -->
-    <div class="modal fade" id="expenseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Expense</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="Expense" method="post">
-
-                        <label for="name">Name:</label>
-                        <input type="text" id="name" name="name">
-
-                        <label for="tags">Choose a tag:</label>
-                        <select id="tags" name="tag">
-                            <option>-Choose a tag-</option>
-                            <option value="need">Need</option>
-                            <option value="want">Want</option>
-                            <option value="savings">Savings</option>
-                        </select>
-
-                        <label for="amount">Amount:</label>
-                        <input type="number" id="amount" name="amount">
-
-                        <label for="date">Transaction date:</label>
-
-                        <input type="date" id="date" name="date" value=""/>
-                        <script>
-                            const date = new Date();
-                            let day = date.getDate();
-                            let month = date.getMonth();
-                            let year = date.getFullYear();
-
-                            let currentDate = day + "-" + (month + 1) + "-" + year;
-
-                            document.getElementById("date").setAttribute("value", currentDate);
-                        </script>
-
-                        <input class="form-check-input" type="checkbox" name="repeating" value="true" id="expenseCheckbox">
-                        <label class="form-check-label" for="expenseCheckbox">
-                            Repeating Expense?
-                        </label>
-
-                        <button class="btn btn-primary" type="submit">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <label for="previousMonths">Previous Months:</label>
-    <select name="monthToGet" id="previousMonths">
-    </select>
 
     <c:forEach var="date" items="${sessionScope.datesOfEntries}">
-
-
-
         <script>
             {
-                console.log(date);
                 let option = document.createElement("option");
-                option.name = "date";
-                option.value = "date";
+                option.value = "${date}";
                 document.getElementById("previousMonths").appendChild(option);
-                switch (date.getMonth()) {
-                    case 0:
-                        option.textContent = "January, " + date.getFullYear();
-                        break;
-                    case 1:
-                        option.textContent = "February, " + date.getFullYear();
-                        break;
-                    case 2:
-                        option.textContent = "March, " + date.getFullYear();
-                        break;
-                    case 3:
-                        option.textContent = "April, " + date.getFullYear();
-                        break;
-                    case 4:
-                        option.textContent = "May, " + date.getFullYear();
-                        break;
-                    case 5:
-                        option.textContent = "June, " + date.getFullYear();
-                        break;
-                    case 6:
-                        option.textContent = "July, " + date.getFullYear();
-                        break;
-                    case 7:
-                        option.textContent = "August, " + date.getFullYear();
-                        break;
-                    case 8:
-                        option.textContent = "September, " + date.getFullYear();
-                        break;
-                    case 9:
-                        option.textContent = "October, " + date.getFullYear();
-                        break;
-                    case 10:
-                        option.textContent = "November, " + date.getFullYear();
-                        break;
-                    case 11:
-                        option.textContent = "December, " + date.getFullYear();
-                        break;
-                }
+                formatJavaDate(option, "${date.getMonth()}", "${date.getYear() + 1900}");
             }
         </script>
-
     </c:forEach>
-
-
-    <div class="container">
         <div class="row d-flex flex-row justify-content-center">
-            <h3 class="text-center">Income Sources</h3>
             <c:choose>
                 <c:when test="${requestScope.editIncome == true}">
 
@@ -281,7 +307,7 @@
 
 
                             <label for="amountEditIncome">Amount:</label>
-                            <input type="number" id="amountEditIncome" name="amount" value="${requestScope.incomeToEdit.getAmount()}">
+                            <input type="number" id="amountEditIncome" name="amount" value="${requestScope.incomeToEdit.getAmount()}" step="0.01">
 
                             <label for="date">Transaction date:</label>
 
@@ -298,9 +324,9 @@
                                 }
                             </script>
 
-                            <button type="submit" name="editId" value="${requestScope.incomeToEdit.getId()}">Submit</button>
+                            <button class="btn btn-primary" type="submit" name="editId" value="${requestScope.incomeToEdit.getId()}">Submit</button>
                         </form>
-                        <form action="Expense" method="get"><button name="refresh" value="true" type="submit">Exit</button></form>
+                        <form action="Expense" method="get"><button class="btn btn-primary" name="refresh" value="true" type="submit">Exit</button></form>
                     </div>
                 </c:when>
             </c:choose>
@@ -333,7 +359,7 @@
                             </script>
 
                             <label for="amountEdit">Amount:</label>
-                            <input type="number" id="amountEdit" name="amount" value="${requestScope.expenseToEdit.getAmount()}">
+                            <input type="number" id="amountEdit" name="amount" value="${requestScope.expenseToEdit.getAmount()}" step="0.01">
 
                             <label for="date">Transaction date:</label>
 
@@ -350,13 +376,14 @@
                                 }
                             </script>
 
-                            <button type="submit" name="editId" value="${requestScope.expenseToEdit.getId()}">Submit</button>
+                            <button class="btn btn-primary" type="submit" name="editId" value="${requestScope.expenseToEdit.getId()}">Submit</button>
                         </form>
-                        <form action="Expense" method="get"><button name="refresh" value="true" type="submit">Exit</button></form>
+                        <form action="Expense" method="get"><button class="btn btn-primary" name="refresh" value="true" type="submit">Exit</button></form>
                     </div>
                 </c:when>
             </c:choose>
             <div class="col-lg-4">
+                <h3 class="text-center">Income Sources</h3>
                 <table id="incomeSources" class="table">
                     <thead>
                     <tr>
@@ -365,6 +392,7 @@
                     </tr>
                     </thead>
                 </table>
+                <h4 id="income">Total Income: $</h4>
             </div>
         </div>
         <div class="row d-flex flex-row justify-content-center">
@@ -422,6 +450,8 @@
                     </thead>
                 </table>
             </div>
+            <h4 id="totalExpense" class="text-center">Total Expenses: $</h4>
+            <h4 id="leftoverMoney" class="text-center">Left Over Money: $</h4>
         </div>
 
         <div class="row d-flex flex-row justify-content-center">
@@ -435,7 +465,7 @@
                             <th>Target Percent</th>
                             <th>Actual Amount</th>
                             <th>Actual Percent</th>
-                            <th>Money Left Over</th>
+                            <th>Surplus/Deficit</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -494,6 +524,7 @@
         let needsAmount = 0;
         let wantsAmount = 0;
         let savingsAmount = 0;
+        let totalExpense = 0;
     </script>
 
     <c:forEach var="expense" items="${sessionScope.expenses}">
@@ -510,6 +541,8 @@
 
                 let editButton = document.createElement("button");
                 editButton.textContent = "Edit";
+                editButton.classList.add("btn");
+                editButton.classList.add("btn-primary");
                 editButton.type = "submit";
 
                 let editButtonForm = document.createElement("form");
@@ -521,6 +554,8 @@
 
                 let deleteButton = document.createElement("button");
                 deleteButton.textContent = "Delete";
+                deleteButton.classList.add("btn");
+                deleteButton.classList.add("btn-primary");
                 deleteButton.type = "submit";
 
                 let deleteButtonForm = document.createElement("form");
@@ -529,9 +564,6 @@
                 deleteButtonForm.appendChild(deleteButton);
                 deleteButton.name = "deleteId";
                 deleteButton.value = ${expense.getId()};
-
-
-
 
                 cellBtns.appendChild(editButtonForm);
                 cellBtns.appendChild(deleteButtonForm);
@@ -554,6 +586,8 @@
                 let cellBtns = row.insertCell(1);
                 let editButton = document.createElement("button");
                 editButton.textContent = "Edit";
+                editButton.classList.add("btn");
+                editButton.classList.add("btn-primary");
                 editButton.type = "submit";
 
                 let editButtonForm = document.createElement("form");
@@ -565,6 +599,8 @@
 
                 let deleteButton = document.createElement("button");
                 deleteButton.textContent = "Delete";
+                deleteButton.classList.add("btn");
+                deleteButton.classList.add("btn-primary");
                 deleteButton.type = "submit";
 
                 let deleteButtonForm = document.createElement("form");
@@ -573,9 +609,6 @@
                 deleteButtonForm.appendChild(deleteButton);
                 deleteButton.name = "deleteId";
                 deleteButton.value = ${expense.getId()};
-
-
-
 
                 cellBtns.appendChild(editButtonForm);
                 cellBtns.appendChild(deleteButtonForm);
@@ -596,6 +629,8 @@
                 let cellBtns = row.insertCell(1);
                 let editButton = document.createElement("button");
                 editButton.textContent = "Edit";
+                editButton.classList.add("btn");
+                editButton.classList.add("btn-primary");
                 editButton.type = "submit";
 
                 let editButtonForm = document.createElement("form");
@@ -607,6 +642,8 @@
 
                 let deleteButton = document.createElement("button");
                 deleteButton.textContent = "Delete";
+                deleteButton.classList.add("btn");
+                deleteButton.classList.add("btn-primary");
                 deleteButton.type = "submit";
 
                 let deleteButtonForm = document.createElement("form");
@@ -614,6 +651,7 @@
                 deleteButtonForm.method = "POST";
                 deleteButtonForm.appendChild(deleteButton);
                 deleteButton.name = "deleteId";
+
                 deleteButton.value = ${expense.getId()};
 
                 cellBtns.appendChild(editButtonForm);
@@ -626,10 +664,12 @@
                 cell.appendChild(amount);
                 savingsAmount += ${expense.getAmount()};
             }
+            totalExpense += ${expense.getAmount()};
         </script>
     </c:forEach>
 
     <script>
+        document.getElementById("totalExpense").textContent += totalExpense.toFixed(2)
         let totalIncome = 0;
     </script>
 
@@ -645,6 +685,8 @@
 
                 let editButton = document.createElement("button");
                 editButton.textContent = "Edit";
+                editButton.classList.add("btn");
+                editButton.classList.add("btn-primary");
                 editButton.type = "submit";
 
                 let editButtonForm = document.createElement("form");
@@ -656,6 +698,8 @@
 
                 let deleteButton = document.createElement("button");
                 deleteButton.textContent = "Delete";
+                deleteButton.classList.add("btn");
+                deleteButton.classList.add("btn-primary");
                 deleteButton.type = "submit";
 
                 let deleteButtonForm = document.createElement("form");
@@ -668,7 +712,6 @@
                 cellBtns.appendChild(editButtonForm);
                 cellBtns.appendChild(deleteButtonForm);
 
-
                 let name = document.createElement("p");
                 let amount = document.createElement("p");
                 name.innerText = "${income.getName()}";
@@ -680,7 +723,11 @@
     </c:forEach>
 
     <script>
-        document.getElementById("income").innerText = "Income: $" + totalIncome.toFixed(2);
+        document.getElementById("income").textContent += totalIncome.toFixed(2);
+        document.getElementById("leftoverMoney").textContent += (totalIncome - totalExpense).toFixed(2);
+        if(totalIncome - totalExpense < 0){
+            document.getElementById("leftoverMoney").style.color = "red";
+        }
     </script>
 
     <script>

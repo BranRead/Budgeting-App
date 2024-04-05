@@ -51,6 +51,8 @@ public class LoginController extends HttpServlet {
             session.setAttribute("budget", budgetSettings);
 
             Calendar dateNow = Calendar.getInstance();
+            session.setAttribute("displayedDate", new Date());
+
             ArrayList<Expense> expenses = expenseDAOImp.selectAll(user.getId(), dateNow);
             session.setAttribute("expenses", expenses);
 

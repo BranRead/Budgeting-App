@@ -88,11 +88,11 @@ public class ExpenseDAOImp implements ExpenseDAO {
             preparedStatement.setInt(1, user_id);
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()) {
-                Date sqlDate = rs.getDate("transaction_date");
-                java.util.Date dateOfTransaction = new java.util.Date(sqlDate.getTime());
+                java.sql.Date sqlDate = rs.getDate("transaction_date");
+
 
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(dateOfTransaction);
+                calendar.setTime(sqlDate);
 
                 int yearOfTransaction = calendar.get(Calendar.YEAR);
                 int monthOfTransaction = calendar.get(Calendar.MONTH);
@@ -103,10 +103,7 @@ public class ExpenseDAOImp implements ExpenseDAO {
                 if(yearOfTransaction != yearCurrentDisplayed || monthOfTransaction != monthCurrentDisplayed){
                     boolean isUnique = true;
 
-                    //This works because the first element added will be unique
-                    //The first element doesn't need to be compared to anything
-                    //It gets added and the index is incremented.
-                    //It's greater than the
+
                     int index = 0;
                     while(isUnique && index < datesOfRecords.size()){
                         Calendar calendarOfRecord = Calendar.getInstance();
@@ -119,7 +116,7 @@ public class ExpenseDAOImp implements ExpenseDAO {
                         index++;
                     }
                     if(isUnique){
-                        datesOfRecords.add(dateOfTransaction);
+                        datesOfRecords.add(sqlDate);
                     }
                 }
             }
