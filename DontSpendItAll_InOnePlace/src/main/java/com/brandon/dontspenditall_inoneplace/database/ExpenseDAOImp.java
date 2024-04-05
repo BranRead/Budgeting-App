@@ -15,7 +15,7 @@ import static com.brandon.dontspenditall_inoneplace.database.MySQLConnection.get
 
 public class ExpenseDAOImp implements ExpenseDAO {
     private static final String SQL_SELECT_All = "SELECT * FROM expenses WHERE user_id = ?";
-    private static final String SQL_SELECT_All_DATES = "SELECT DISTINCT transaction_date FROM expenses WHERE user_id = ?";
+    private static final String SQL_SELECT_All_DATES = "SELECT DISTINCT transaction_date, is_repeating FROM expenses WHERE user_id = ?";
     private static final String SQL_SELECT = "SELECT * FROM expenses WHERE expense_id = ?";
 
     private static final String  SQL_INSERT = "INSERT INTO expenses (user_id, name, amount, tag, transaction_date, is_repeating) VALUES(?, ?, ?, ?, ?, ?)";
@@ -89,6 +89,8 @@ public class ExpenseDAOImp implements ExpenseDAO {
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()) {
                 java.sql.Date sqlDate = rs.getDate("transaction_date");
+                //This is for a future feature, potentially.
+//                boolean isRepeating = (rs.getInt("is_repeating") == 1);
 
 
                 Calendar calendar = Calendar.getInstance();
@@ -100,7 +102,8 @@ public class ExpenseDAOImp implements ExpenseDAO {
                 int yearCurrentDisplayed = currentDisplayedDate.get(Calendar.YEAR);
                 int monthCurrentDisplayed = currentDisplayedDate.get(Calendar.MONTH);
 
-                if(yearOfTransaction != yearCurrentDisplayed || monthOfTransaction != monthCurrentDisplayed){
+                if(yearOfTransaction != yearCurrentDisplayed ||
+                        monthOfTransaction != monthCurrentDisplayed){
                     boolean isUnique = true;
 
 
